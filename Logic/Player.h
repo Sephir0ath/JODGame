@@ -9,14 +9,21 @@
 #include <SDL2/SDL.h>
 #include <vector>
 
+#include "Ray.h"
+
 class Player {
-    private:
-        int health;
-        const int VEL = 70;
-        std::vector<int> pos;
     public:
-        Player(std::vector<int> pos);
-        std::vector<int> getPos();
+        int health;
+        const int VEL = 150;
+        std::vector<float> pos;
+        std::vector<Ray> rays;
+        float direction = 0;
+        const int MAX_DISTANCE_VIEW = 400;
+
+    
+        Player(std::vector<float> pos);
+        void lookWalls();
+        std::vector<float> getPos();
         int getVel();
         void setPos(int index, int vel);
 

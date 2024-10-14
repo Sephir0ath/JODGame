@@ -12,10 +12,12 @@ class GameManager {
         SDL_Renderer* renderer;
         const int WIDTH = 1280;
         const int HEIGHT = 720;
+        float currentTime;
+        float deltaTime;
+        float lastTime = 0;
     public:
         GameManager();
         void run();
-        void runLevel();
 
 };
 

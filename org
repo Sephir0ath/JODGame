@@ -3,3 +3,12 @@
 * Crear clase jugador y moverlo
 * Crear clase enemigo; renderizar varios enemigos y moverlos continuamente
 
+
+* Lanzar rayos desde el jugador en rango de 45 grados -> LISTO :)
+
+* Usar deltaTime -> LISTO :)
+
+* Tener movimiento funcional y rotatorio del jugador 
+  ajustando la direccion de sus rayos -> LISTO :)
+
+* Agregar obstaculos y cargarlos desde archivo

@@ -2,12 +2,15 @@
 // Created by pyrr on 17-09-24.
 //
 
-#include "GameManager.h"
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <ostream>
 #include <vector>
+
+#include "GameManager.h"
 #include "Interface/PlayerController.h"
+#include "Renderer.h"
+
 
 GameManager::GameManager() {
     if(SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -21,67 +24,18 @@ GameManager::GameManager() {
 
 }
 
-void GameManager::runLevel() {
-    // LEER ARCHIVO DE NIVEL - OBTENER MATRIZ - RENDERIZAR NIVEL A PARTIR DE MATRIZ
-    //Player player(pos);
-    //playerController(player);
-    //obj
-    std::vector<int> pos = {400, 500};
-    Player player =  Player(pos);
-    PlayerController playerController = PlayerController(&player);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
-
-    playerController.handleInput(0.016);
-
-    playerController.render(renderer);
-
-    SDL_RenderPresent(renderer);
-
-
-
-
-
-
-
-
-
-
-
-    /*
-        while (true) {
-        //player.updatepos();
-        // Handle collision
-        //render("player.png", player.getX, player.getY);
-        renderCopy
-        switch gameObject:
-            case 1:
-                enemigo.render();
-                rendercpy("enemi
-            case 2:
-                wall.render();
-
-            case 3:
-                playerController.render();
-
-
-        for()
-            render(gameobject[i],
-
-
-    */
-}
-
 
 void GameManager::run(){
 
-    std::vector<int> pos = {400, 500};
-    Player player =  Player(pos);
+    Player player =  Player({400, 500});
     PlayerController playerController = PlayerController(&player);
+    Renderer::setRenderer(renderer);
 
     while(true) {
+        
+        currentTime = SDL_GetTicks();
+        deltaTime = (currentTime - lastTime) / 1000.0f;
+        lastTime = currentTime;
 
         SDL_Event event;
         SDL_PollEvent(&event);
@@ -99,10 +53,11 @@ void GameManager::run(){
             }
         }
 
-        SDL_SetRenderDrawColor(renderer, 154, 15, 162, 255);
+        SDL_SetRenderDrawColor(renderer, 120, 120, 120, 255);
         SDL_RenderClear(renderer);
 
-        playerController.handleInput(0.016);
+        playerController.handleInput(deltaTime);
+        player.lookWalls();
         playerController.render(renderer);
 
         SDL_RenderPresent(renderer);
