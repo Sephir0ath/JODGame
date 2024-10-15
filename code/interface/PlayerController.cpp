@@ -2,7 +2,6 @@
 
 PlayerController::PlayerController(Player *player) {
     this->player = player;
-
 }
 
 void PlayerController::handleInput(float timeStep) {

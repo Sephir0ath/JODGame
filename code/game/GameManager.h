@@ -1,24 +1,22 @@
-//
-// Created by pyrr on 17-09-24.
-//
+#ifndef GAME_MANAGER_H
+#define GAME_MANAGER_H
 
-#ifndef GAMEMANAGER_H
-#define GAMEMANAGER_H
-#include <SDL2/SDL.h>
+#include "Type.h"
 
-class GameManager {
-    private:
-        SDL_Window* window;
-        SDL_Renderer* renderer;
-        const int WIDTH = 1280;
-        const int HEIGHT = 720;
-    public:
-        GameManager();
-        void run();
-        void runLevel();
+#include "game/Window.h"
 
+class GameManager
+{
+	public:
+		GameManager();
+		
+		void run();
+	
+	private:
+		const int WINDOW_SIZE_X = 1280;
+		const int WINDOW_SIZE_Y = 720;
+		
+		Window window;
 };
 
-
-
-#endif //GAMEMANAGER_H
+#endif

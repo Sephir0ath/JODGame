@@ -4,7 +4,7 @@
 
 #ifndef PLAYERCONTROLLER_H
 #define PLAYERCONTROLLER_H
-#include "../Logic/Player.h"
+#include "Player.h"
 
 
 class PlayerController {

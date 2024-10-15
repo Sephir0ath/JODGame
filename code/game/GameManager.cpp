@@ -1,111 +1,75 @@
-//
-// Created by pyrr on 17-09-24.
-//
+#include "SDL2/SDL.h"
 
-#include "GameManager.h"
-#include <SDL2/SDL.h>
-#include <iostream>
-#include <ostream>
-#include <vector>
-#include "Interface/PlayerController.h"
+#include "game/GameManager2.h"
+#include "game/SDLError.h"
+#include "game/Timer.h"
 
-GameManager::GameManager() {
-    if(SDL_Init(SDL_INIT_VIDEO) != 0)
-    {
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
+#include "log/Error.h"
 
-    window = SDL_CreateWindow("-", 0, 0, 1280, 720, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+GameManager::GameManager() : window(this -> WINDOW_SIZE_X, this -> WINDOW_SIZE_Y)
+{
 }
 
-void GameManager::runLevel() {
-    // LEER ARCHIVO DE NIVEL - OBTENER MATRIZ - RENDERIZAR NIVEL A PARTIR DE MATRIZ
-    //Player player(pos);
-    //playerController(player);
-    //obj
-    std::vector<int> pos = {400, 500};
-    Player player =  Player(pos);
-    PlayerController playerController = PlayerController(&player);
-
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-
-
-    playerController.handleInput(0.016);
-
-    playerController.render(renderer);
-
-    SDL_RenderPresent(renderer);
-
-
-
-
-
-
-
-
-
-
-
-    /*
-        while (true) {
-        //player.updatepos();
-        // Handle collision
-        //render("player.png", player.getX, player.getY);
-        renderCopy
-        switch gameObject:
-            case 1:
-                enemigo.render();
-                rendercpy("enemi
-            case 2:
-                wall.render();
-
-            case 3:
-                playerController.render();
-
-
-        for()
-            render(gameobject[i],
-
-
-    */
-}
-
-
-void GameManager::run(){
-
-    std::vector<int> pos = {400, 500};
-    Player player =  Player(pos);
-    PlayerController playerController = PlayerController(&player);
-
-    while(true) {
-
-        SDL_Event event;
-        SDL_PollEvent(&event);
-
-        if(event.type == SDL_QUIT)
-        {
-            exit(0);
-        }
-
-        if(event.type == SDL_KEYDOWN)
-        {
-            if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-            {
-                exit(0);
-            }
-        }
-
-        SDL_SetRenderDrawColor(renderer, 154, 15, 162, 255);
-        SDL_RenderClear(renderer);
-
-        playerController.handleInput(0.016);
-        playerController.render(renderer);
-
-        SDL_RenderPresent(renderer);
-
-    }
+void GameManager::run()
+{
+	const int MAX_UPDATES = 5;
+	
+	const double FPS = 60;
+	const double UPDATE_TIME = 1 / FPS;
+	
+	if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
+		throw SDLError("GameManager::run()");
+	
+	try
+	{
+		Timer timer;
+		
+		double timeRemaining = 0;
+		
+		while(true)
+		{
+			timeRemaining += timer.count();
+			
+			timer.restart();
+			
+			{
+				SDL_Event event;
+				
+				while(SDL_PollEvent(&event))
+				{
+					switch(event.type)
+					{
+						case SDL_KEYDOWN:
+						{
+							if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+								return;
+						} break;
+						
+						case SDL_QUIT:
+							return;
+					}
+				}
+			}
+			
+			for(int z = 0; (timeRemaining >= UPDATE_TIME) && (z < MAX_UPDATES); z++)
+			{
+				// actualizar fisicas
+				
+				timeRemaining -= UPDATE_TIME;
+			}
+			
+			// actualizar graficos
+		}
+	}
+	
+	catch(const Error& error)
+	{
+		error.report();
+	}
+	
+	catch(...)
+	{
+	}
+	
+	SDL_Quit();
 }
