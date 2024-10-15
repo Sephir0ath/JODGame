@@ -1,7 +1,3 @@
-//
-// Created by pyrr on 17-09-24.
-//
-
 #include "PlayerController.h"
 
 PlayerController::PlayerController(Player *player) {

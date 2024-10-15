@@ -1,9 +1,9 @@
 .PHONY: clean
 
-TARGET_EXEC ?= ./run
+TARGET_EXEC ?= ./exec/run
 
-SOURCE_DIR = ./
-OUTPUT_DIR = output
+SOURCE_DIR = ./code
+OUTPUT_DIR = ./exec
 
 SRCS := $(shell find $(SOURCE_DIR) -name "*.cpp")
 OBJS := $(SRCS:%=$(OUTPUT_DIR)/%.o)

@@ -1,5 +1,0 @@
-
-* Crear ventana 
-* Crear clase jugador y moverlo
-* Crear clase enemigo; renderizar varios enemigos y moverlos continuamente
-
