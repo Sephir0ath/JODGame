@@ -12,7 +12,7 @@
 Player::Player(std::vector<float> position) {
     this->pos = position;
 
-    for(int i = -22;i < 22;i++){
+    for(int i = -14;i < 14;i++){
         
         Ray ray = Ray(pos, direction + i);
         rays.push_back(ray);
