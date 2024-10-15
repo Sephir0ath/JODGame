@@ -15,13 +15,13 @@ void PlayerController::handleInput(float deltaTime) {
 
     if (keystate[SDL_SCANCODE_A]) // -> Rota izquierda
     {
-        player->direction -= 0.1;
+        player->direction -= 0.5;
         // player->setPos(0, -player->getVel() * deltaTime);
     }
 
     if (keystate[SDL_SCANCODE_D]) // -> Rota derecha
     {
-        player->direction += 0.1;
+        player->direction += 0.5;
         // player->setPos(0, player->getVel() * deltaTime);
     }
 

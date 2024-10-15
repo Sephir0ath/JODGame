@@ -11,4 +11,12 @@
 * Tener movimiento funcional y rotatorio del jugador 
   ajustando la direccion de sus rayos -> LISTO :)
 
-* Agregar obstaculos y cargarlos desde archivo
+* Agregar obstaculos y cargarlos desde archivo:
+        ** Crear clase Obstacle -> LISTO :)
+        
+        ** Raycast con Obstacle -> LISTO :)
+
+        ** Crear clase MapHandler que:
+              *** Lea archivo y renderice 
+                  GameObjects segun casillas
+          

@@ -10,8 +10,8 @@ class GameManager {
     private:
         SDL_Window* window;
         SDL_Renderer* renderer;
-        const int WIDTH = 1280;
-        const int HEIGHT = 720;
+        const int WIDTH = 800;
+        const int HEIGHT = 800;
         float currentTime;
         float deltaTime;
         float lastTime = 0;

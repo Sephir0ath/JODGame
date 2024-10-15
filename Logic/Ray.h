@@ -6,11 +6,7 @@
 #include <SDL2/SDL.h>
 #include <cmath>
 
-struct line{
-    std::vector<float> startPoint;
-    std::vector<float> endPoint;
-
-};
+#include "Obstacle.h"
 
 class Ray{
 
