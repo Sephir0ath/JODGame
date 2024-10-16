@@ -11,6 +11,8 @@ class Window
 	public:
 		Window(const int& sizeX, const int& sizeY);
 		~Window();
+		
+		SDL_Renderer* getRenderer();
 	
 	private:
 		SDL_Window* window;

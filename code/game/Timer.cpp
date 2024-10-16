@@ -10,7 +10,7 @@ double Timer::count() const
 	
 	Timer::instant finish = this -> now();
 	
-	return duration_cast<seconds>(finish - (this -> start)).count();
+	return (duration_cast<milliseconds>(finish - (this -> start)).count()) / 1000.0;
 }
 
 void Timer::restart()

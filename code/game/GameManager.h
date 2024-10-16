@@ -14,7 +14,7 @@ class GameManager
 	
 	private:
 		const int WINDOW_SIZE_X = 1280;
-		const int WINDOW_SIZE_Y = 720;
+		const int WINDOW_SIZE_Y = 1280;
 		
 		Window window;
 };
