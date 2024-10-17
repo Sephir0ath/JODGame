@@ -11,7 +11,7 @@ Vector2::dotProduct(const Vector2& vectorA, const Vector2& vectorB)
 
 Vector2 Vector2::operator+(const Vector2& vectorB)
 {
-    return Vector2(); // Por implementar
+    return Vector2(this -> x + vectorB.x, this -> y + vectorB.y);
 }
 
 bool Vector2::operator==(const Vector2& vectorB)
