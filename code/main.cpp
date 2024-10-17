@@ -4,5 +4,8 @@ int main()
 {
 	GameManager game;
 	
+	testVectorSum();
+    testVectorDot();
+
 	game.run();
 }
