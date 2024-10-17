@@ -4,9 +4,9 @@ Vector2::Vector2(const int x, const int y) : x(x), y(y)
 {
 }
 
-double Vector2::dotProduct(const Vector2& vectorA, const Vector2& vectorB)
+Vector2::dotProduct(const Vector2& vectorA, const Vector2& vectorB)
 {
-    return -1; // Por implementar
+    return vectorA.x * vectorB.x + vectorA.y * vectorB.y;
 }
 
 Vector2 Vector2::operator+(const Vector2& vectorB)
