@@ -1,0 +1,55 @@
+package Interface.menu;
+
+import Interface.PrincipalPanel;
+import Interface.Window;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MainMenu extends JPanel {
+    JButton playLevelsButton;
+    JButton exitButton;
+    JButton settingsButton;
+    JButton levelMakerButton;
+
+    public MainMenu() {
+        setLayout(null);
+
+        playLevelsButton = new JButton("Play Levels");
+        playLevelsButton.setBounds(10, 10, 100, 30);
+        playLevelsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PrincipalPanel.getInstance().showPanel("PlayLevels");
+            }
+        });
+
+        add(playLevelsButton);
+
+        exitButton = new JButton("Exit");
+        exitButton.setBounds(650, 720, 100, 30);
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        add(exitButton);
+
+        settingsButton = new JButton("Settings");
+        settingsButton.setBounds(10, 100, 100, 30);
+        add(settingsButton);
+
+        levelMakerButton = new JButton("Level Maker");
+        levelMakerButton.setBounds(10, 150, 100, 30);
+        add(levelMakerButton);
+
+
+
+    }
+
+
+
+}
