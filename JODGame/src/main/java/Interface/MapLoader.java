@@ -1,6 +1,7 @@
 package Interface;
 
 import logic.*;
+import logic.Enemies.Enemy;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class MapLoader extends JPanel {
     private RayCaster rayCaster;
     private int mapColumnsSize;
     private int mapRowsSize;
+    private int[][] mapMatrix;
     private Player player;
     public MapLoader(Player player, String mapFile) {
         super();
@@ -49,6 +51,10 @@ public class MapLoader extends JPanel {
         tileWidth = Window.getInstance().getWidth() / mapColumnsSize;
         tileHeight = Window.getInstance().getHeight() / mapRowsSize;
 
+        // Matriz del mapa (para movimiento de enemigos)
+        mapMatrix = new int[mapRowsSize][mapColumnsSize];
+
+
         // Abrir nuevamente el archivo para poder guardar todos los objetos estaticos en un arreglo para poder pintarlos
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mapFile));
@@ -59,24 +65,28 @@ public class MapLoader extends JPanel {
                     switch (line.charAt(i)){
                         case '0':
                             gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
+                            mapMatrix[row][i] = 0;
                             break;
 
                         case '1':
                             gameObjects.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
                             walls.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
+                            mapMatrix[row][i] = 1;
                             break;
 
                         case '2':
                             gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
                             playerRowLocation = row;
                             playerColLocation = i;
+                            mapMatrix[row][i] = 2;
                             break;
 
                         case '3':
                             gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
                             ImageIcon enemyImg = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("enemy.png")));
-                            Enemy enemy = new Enemy(enemyImg, new Point(i * tileWidth, row * tileHeight));
+                            Enemy enemy = new Enemy(enemyImg, new Point(i * tileWidth + tileWidth/2, row * tileHeight + tileHeight/2));
                             enemies.add(enemy);
+                            mapMatrix[row][i] = 3;
                             break;
 
                     }
@@ -110,7 +120,7 @@ public class MapLoader extends JPanel {
                 g.setColor(Color.BLACK);
                 g.fillRect(currentColumn * tileWidth, currentRow * tileHeight, 800 / mapColumnsSize, 800 / mapRowsSize);
             } else if (gameObject instanceof Wall) {
-                g.setColor(Color.RED);
+                g.setColor(Color.WHITE);
                 g.fillRect(currentColumn * tileWidth, currentRow * tileHeight, 800 / mapColumnsSize, 800 / mapRowsSize);
             }
 
@@ -125,20 +135,7 @@ public class MapLoader extends JPanel {
 
         // Raycasting del jugador
         RayCaster playerRayCaster = player.getRaycaster();
-        ArrayList<Point> endPoints = playerRayCaster.lookWalls(walls);
-
-        g.setColor(Color.RED);
-        for(Enemy enemy : enemies) {
-
-            g.drawImage(enemy.getTexture().getImage(), enemy.getPos().x, enemy.getPos().y, null);
-            RayCaster enemyRayCaster = enemy.getRaycaster();
-            ArrayList<Point> enemyEndPoints = enemyRayCaster.lookWalls(walls);
-            for(Point endPoint : enemyEndPoints) {
-                g.drawLine(enemy.getPos().x, enemy.getPos().y, endPoint.x, endPoint.y);
-            }
-
-        }
-
+        ArrayList<Point> endPoints = playerRayCaster.lookForObstacles(walls, player.getPlayerWall(), true);
 
         g.setColor(Color.GREEN);
         for (int i = 0; i < endPoints.size(); i++) {
@@ -147,10 +144,63 @@ public class MapLoader extends JPanel {
 
         // Dibujar el jugador
         g.drawImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("player.png"))).getImage(), player.getPos().x, player.getPos().y,null);
+        // Dibujar muro interno del jugador (por ahora para comprobar que funcione bien)
+        ArrayList<Line> playerWallLines = player.getPlayerWall().getLines();
+        for(Line line : playerWallLines) {
+            g.drawLine(line.getStartPoint().x, line.getStartPoint().y, line.getEndPoint().x, line.getEndPoint().y);
+        }
+
+        // Renderizado de enemigos y raycasting
+        for(Enemy enemy : enemies) {
+            // enemy.setDetectingPlayer(false);
+            g.setColor(Color.RED);
+            g.drawImage(enemy.getTexture().getImage(), enemy.getPos().x, enemy.getPos().y, null);
+            RayCaster enemyRayCaster = enemy.getRaycaster();
+            ArrayList<Point> enemyEndPoints = enemyRayCaster.lookForObstacles(walls, player.getPlayerWall(), false);
+
+            for(Point endPoint : enemyEndPoints) {
+                g.drawLine(enemy.getPos().x, enemy.getPos().y, endPoint.x, endPoint.y);
+
+            }
+
+        }
+
+        for(Enemy enemy : enemies) { // -> Solo para ver la ruta de movimiento del enemigo
+
+            g.setColor(Color.BLUE);
+            g.drawLine(enemy.getPos().x, enemy.getPos().y, enemy.getMovementPattern().getEndPoint().x, enemy.getMovementPattern().getEndPoint().y);
+
+        }
+
+
     }
 
     public Point getPlayerFirstLocation(){
         return new Point(tileWidth*playerColLocation, tileHeight*playerRowLocation);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public ArrayList<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public int[][] getMapMatrix() {
+        return mapMatrix;
+    }
+
+    public ArrayList<Wall> getWalls() {
+        return walls;
+    }
+
+    public int getTileWidth() {
+        return tileWidth;
+    }
+
+    public int getTileHeight() {
+        return tileHeight;
     }
 
 }

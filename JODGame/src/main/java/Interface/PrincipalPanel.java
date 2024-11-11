@@ -4,6 +4,9 @@ import Interface.menu.CreditsJPanel;
 import Interface.menu.MainMenuJPanel;
 import Interface.menu.PlayLevelsJPanel;
 import Interface.menu.SettingsJPanel;
+import logic.Enemies.ActiveEnemyMovement;
+import logic.Enemies.Enemy;
+import logic.Enemies.PassiveEnemyMovement;
 import logic.Player;
 
 import javax.swing.*;
@@ -16,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 public class PrincipalPanel extends JPanel {
     private PlayerController playerController;
+    private EnemyController enemyController;
+    private PassiveEnemyMovement passiveEnemyMovement;
+    private ActiveEnemyMovement activeEnemyMovement;
     private ArrayList<MapLoader> premadeMaps;
     private static PrincipalPanel instance;
     private static boolean isActualPanelAMap;
@@ -56,13 +62,17 @@ public class PrincipalPanel extends JPanel {
         setFocusable(true);
         requestFocusInWindow();
         addKeyListener(playerController);
+        enemyController = new EnemyController();
+        addKeyListener(enemyController);
+        passiveEnemyMovement = new PassiveEnemyMovement();
+        activeEnemyMovement = new ActiveEnemyMovement();
 
         //Player movement scheduler
         // Esto repinta los niveles y actualiza la posición del jugador
-        ScheduledExecutorService playerScheduler = new ScheduledThreadPoolExecutor(1);
-        playerScheduler.scheduleAtFixedRate(new Runnable() {
 
-
+        // QUIZA DEJAR EN UN SOLO HILO EVITA ERRORES DE CONCURRENCIA
+        ScheduledExecutorService updateScheduler = new ScheduledThreadPoolExecutor(1);
+        updateScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
                 player.updatePlayerPosition(0.016);
@@ -71,10 +81,28 @@ public class PrincipalPanel extends JPanel {
                 }
 
             }
-        }, 0, 10, TimeUnit.MILLISECONDS);
+        }, 5000, 10, TimeUnit.MILLISECONDS);
 
 
+        // ES POSIBLE QUE USAR ESTE OTRO HILO PARA LOS ENEMIGOS CAUSE EXCEPCIONES DE CONCURRENCIA
+        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(2);
+        addKeyListener(enemyController);
+        enemiesScheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                enemyController.updateAllEnemiesPositions(0.016);
+                for(Enemy enemy : passiveEnemyMovement.getEnemies()) {
+//                    if(!enemy.isDetectingPlayer()) {
+//                        passiveEnemyMovement.moveEnemy(enemy);
+//                    }
+                    passiveEnemyMovement.moveEnemy(enemy);
 
+                }
+                if (isActualPanelAMap) {
+                    mapLoader.repaint();
+                }
+            }
+        }, 5000, 10, TimeUnit.MILLISECONDS);
 
     }
 
@@ -82,12 +110,27 @@ public class PrincipalPanel extends JPanel {
         this.add(panel, name);
     }
 
-    public void showPanel(String panelName){
+    public void showPanel(String panelName){ // -> Acá mapLoader tiene un valor asignado, luego se puede obtener el array de enemigos
         cardLayout.show(this, panelName);
         if (panelName.contains("map")){
             isActualPanelAMap = true;
             mapLoader = premadeMaps.get(Character.getNumericValue(panelName.charAt(panelName.length() - 1))); // Obtener el index del ultimo digito del String de panelName
             player.setPos(mapLoader.getPlayerFirstLocation());
+
+            enemyController.setEnemiesArray(mapLoader.getEnemies()); // -> Para movimiento con teclado (para test)
+
+            for(Enemy enemy : mapLoader.getEnemies()) {
+                passiveEnemyMovement.setupEnemyMovement(enemy, mapLoader.getEnemies(), mapLoader.getWalls(),
+                                                 mapLoader.getPlayer(), mapLoader.getMapMatrix(),
+                                                 mapLoader.getTileWidth(), mapLoader.getTileHeight()); // -> Para movimiento inteligente de enemigos
+
+                activeEnemyMovement.setupEnemyMovement(enemy, mapLoader.getEnemies(), mapLoader.getWalls(),
+                                                 mapLoader.getPlayer(), mapLoader.getMapMatrix(),
+                                                 mapLoader.getTileWidth(), mapLoader.getTileHeight());
+
+            }
+
+
         }
 
         else{

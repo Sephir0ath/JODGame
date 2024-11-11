@@ -17,4 +17,8 @@ public class Line {
     public Point getEndPoint() {
         return endPoint;
     }
+
+    public boolean containsPoint(Point point) {
+        return false;
+    }
 }

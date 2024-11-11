@@ -3,17 +3,20 @@ package logic;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Player extends GameObject {
     private RayCaster rayCaster;
     private double direction;
     private int velocity = 0;
     private Point pos;
-
+    private Wall playerWall; // -> Para deteccion enemigo a jugador
+    private ImageIcon playerWallTexture; // -> Solo por ahora para verificar muro de jugador
 
     public Player(ImageIcon img) {
         super(img);
         rayCaster = new RayCaster(new Point(0,0));
+        playerWall = new Wall(new Point(0,0), img.getIconHeight(), img.getIconWidth(), null);
     }
 
 
@@ -41,6 +44,7 @@ public class Player extends GameObject {
         pos.setLocation(newX, newY);
         rayCaster.updateRaysPos(pos);
 
+        playerWall.updatePosition(pos);
     }
 
 
@@ -50,6 +54,7 @@ public class Player extends GameObject {
 
     public void setPos(Point pos) {
         this.pos = pos;
+        playerWall.updatePosition(pos);
         rayCaster.updateRaysPos(pos);
     }
 
@@ -63,4 +68,15 @@ public class Player extends GameObject {
         return direction;
     }
 
+    public ImageIcon getPlayerWallTexture() {
+        return playerWallTexture;
+    }
+
+    public Point getPlayerWallPosition() {
+        return pos;
+    }
+
+    public Wall getPlayerWall() {
+        return playerWall;
+    }
 }
