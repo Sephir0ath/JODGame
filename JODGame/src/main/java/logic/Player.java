@@ -23,13 +23,16 @@ public class Player extends GameObject {
         rayCaster.updateRaysDirection(direction);
     }
 
+
     private void normalizeDirection() {
         this.direction = (this.direction % 360 + 360) % 360;
     }
 
+
     public void setVelocity(int velocity){
         this.velocity = velocity;
     }
+
 
     public void updatePlayerPosition(double timeStep){
         double newX = pos.getX() + velocity*timeStep * Math.cos(Math.toRadians(direction));
@@ -40,6 +43,7 @@ public class Player extends GameObject {
 
     }
 
+
     public Point getPos() {
         return pos;
     }
@@ -49,9 +53,11 @@ public class Player extends GameObject {
         rayCaster.updateRaysPos(pos);
     }
 
+
     public RayCaster getRaycaster() {
         return rayCaster;
     }
+
 
     public double getDirection() {
         return direction;

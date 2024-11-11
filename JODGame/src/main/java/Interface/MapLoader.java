@@ -1,23 +1,22 @@
-package logic;
+package Interface;
 
-import Interface.Window;
+import logic.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class MapLoader extends JPanel {
     private int playerRowLocation, playerColLocation;
     private ArrayList<GameObject> gameObjects;
     private int tileHeight, tileWidth;
     private ArrayList<Wall> walls;
+    private ArrayList<Enemy> enemies;
     private RayCaster rayCaster;
     private int mapColumnsSize;
     private int mapRowsSize;
@@ -27,6 +26,7 @@ public class MapLoader extends JPanel {
         this.player = player;
         gameObjects = new ArrayList<>();
         walls = new ArrayList<>();
+        enemies = new ArrayList<>();
         mapRowsSize = 0;
         mapColumnsSize = 0;
 
@@ -53,7 +53,7 @@ public class MapLoader extends JPanel {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mapFile));
             String line;
-            int counter = 0; // Filas
+            int row = 0; // Filas
             while ((line = reader.readLine()) != null){
                 for (int i = 0; i < mapColumnsSize; i++) { // Columnas
                     switch (line.charAt(i)){
@@ -62,21 +62,28 @@ public class MapLoader extends JPanel {
                             break;
 
                         case '1':
-                            gameObjects.add(new Wall(new Point(i*tileWidth, counter*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
-                            walls.add(new Wall(new Point(i*tileWidth, counter*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
+                            gameObjects.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
+                            walls.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
                             break;
 
                         case '2':
                             gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
-                            playerRowLocation = counter;
+                            playerRowLocation = row;
                             playerColLocation = i;
+                            break;
+
+                        case '3':
+                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
+                            ImageIcon enemyImg = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("enemy.png")));
+                            Enemy enemy = new Enemy(enemyImg, new Point(i * tileWidth, row * tileHeight));
+                            enemies.add(enemy);
                             break;
 
                     }
 
 
                 }
-                counter++;
+                row++;
             }
 
         }
@@ -118,22 +125,22 @@ public class MapLoader extends JPanel {
 
         // Raycasting del jugador
         RayCaster playerRayCaster = player.getRaycaster();
-        g.setColor(Color.GREEN);
         ArrayList<Point> endPoints = playerRayCaster.lookWalls(walls);
 
-        /*
-        for (int i = 0; i < ArrayEnemigos.length; i++){
-            ArrayEnemigos.move();
+        g.setColor(Color.RED);
+        for(Enemy enemy : enemies) {
 
-            ArrayList<Point> endPoints2 = ArrayEnemigos.get(i).getRayCaster().lookwalls(walls);
-            for (int j = 0; j < endPoints2.size(); j++){
-                g.drawLine(ArrayEnemigos.get(i).getPos().x, ArrayEnemigos.get(i).getPos().y, endPoints2.get(j).x, endPoints2.get(j).y);
+            g.drawImage(enemy.getTexture().getImage(), enemy.getPos().x, enemy.getPos().y, null);
+            RayCaster enemyRayCaster = enemy.getRaycaster();
+            ArrayList<Point> enemyEndPoints = enemyRayCaster.lookWalls(walls);
+            for(Point endPoint : enemyEndPoints) {
+                g.drawLine(enemy.getPos().x, enemy.getPos().y, endPoint.x, endPoint.y);
             }
 
-
         }
-        */
 
+
+        g.setColor(Color.GREEN);
         for (int i = 0; i < endPoints.size(); i++) {
             g.drawLine(playerRayCaster.getRaysArray().get(i).getPos().x, playerRayCaster.getRaysArray().get(i).getPos().y, endPoints.get(i).x, endPoints.get(i).y);
         }

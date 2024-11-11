@@ -25,16 +25,8 @@ public class RayCaster {
     public void updateRaysDirection(double direction){
         for (int i = 0; i < 44; i++) { // Assuming there are 44 rays (-22 to +21 degrees)
             raysArray.get(i).setDirection(Math.cos(Math.toRadians(direction+i -22)), Math.sin(Math.toRadians(direction+i -22)));
-            //System.out.println(i);
-            //System.out.println(raysArray.get(i).getDirectionX());
-            //System.out.println(raysArray.get(i).getDirectionY());
         }
 
-        /* for (int i = -22; i < 22; i++) {
-            double newX = raysArray.get(i+22).getDirectionX() + Math.cos(direction);//direction;//
-            double newY = raysArray.get(i+22).getDirectionY() + Math.sin(direction);//direction;//
-            raysArray.get(i+22).setDirection(newX, newY);
-        }*/
     }
 
     public ArrayList<Point> lookWalls(ArrayList<Wall> walls){

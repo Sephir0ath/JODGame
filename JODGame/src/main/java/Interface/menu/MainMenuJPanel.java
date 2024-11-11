@@ -8,13 +8,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MainMenu extends JPanel {
+public class MainMenuJPanel extends JPanel {
     JButton playLevelsButton;
     JButton exitButton;
     JButton settingsButton;
     JButton levelMakerButton;
 
-    public MainMenu() {
+    public MainMenuJPanel() {
         setLayout(null);
         this.setBackground(Color.MAGENTA);
 
@@ -42,6 +42,12 @@ public class MainMenu extends JPanel {
 
         settingsButton = new JButton("Settings");
         settingsButton.setBounds(Window.getInstance().getWidth()/2-50, Window.getInstance().getHeight()/3, 100, 30);
+        settingsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PrincipalPanel.getInstance().showPanel("Settings");
+            }
+        });
         add(settingsButton);
 
         levelMakerButton = new JButton("Level Maker");

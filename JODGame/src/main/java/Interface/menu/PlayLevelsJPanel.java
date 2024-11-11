@@ -9,7 +9,7 @@ public class PlayLevelsJPanel extends JPanel {
 
     public PlayLevelsJPanel() {
         this.setLayout(new GridLayout(2, 3));
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             JButton levelButton = new JButton(String.valueOf(i+1));
             int level = i;
             levelButton.addActionListener(e -> PrincipalPanel.getInstance().showPanel("map" + level));

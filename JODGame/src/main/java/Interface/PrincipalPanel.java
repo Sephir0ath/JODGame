@@ -1,15 +1,14 @@
 package Interface;
 
-import Interface.menu.MainMenu;
+import Interface.menu.CreditsJPanel;
+import Interface.menu.MainMenuJPanel;
 import Interface.menu.PlayLevelsJPanel;
-import logic.MapLoader;
+import Interface.menu.SettingsJPanel;
 import logic.Player;
 
 import javax.swing.*;
 import java.awt.*;
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -36,14 +35,18 @@ public class PrincipalPanel extends JPanel {
 
 
         // -------- Menú --------------
-        MainMenu mainMenu = new MainMenu();
+        MainMenuJPanel mainMenuJPanel = new MainMenuJPanel();
         PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel();
+        CreditsJPanel creditsJPanel = new CreditsJPanel();
+        SettingsJPanel settingsJPanel = new SettingsJPanel();
 
-        add(mainMenu, "MainMenu"); // Menú principal
+        add(mainMenuJPanel, "MainMenu"); // Menú principal
         add(playLevelsJPanel, "PlayLevels"); // Menú de los niveles prehechos
+        add(settingsJPanel, "Settings");
+        add(creditsJPanel, "Credits");
 
         // -------- Levels ------------
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             premadeMaps.add(new MapLoader(player, "src/main/resources/map" + i + ".txt"));
             add(premadeMaps.get(i), "map" + i);
         }
