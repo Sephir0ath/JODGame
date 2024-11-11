@@ -5,11 +5,10 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Player extends GameObject {
-    private Point pos;
-    private int velocity = 0;
-    private final int MAX_DISTANCE_VIEW = 400;
-    private double direction;
     private RayCaster rayCaster;
+    private double direction;
+    private int velocity = 0;
+    private Point pos;
 
 
     public Player(ImageIcon img) {
@@ -21,12 +20,10 @@ public class Player extends GameObject {
     public void addToDirection(double value){
         direction += value;
         normalizeDirection();
-        System.out.println(direction);
         rayCaster.updateRaysDirection(direction);
     }
 
     private void normalizeDirection() {
-        // Ensure direction is within 0-360 by wrapping it around
         this.direction = (this.direction % 360 + 360) % 360;
     }
 
@@ -35,12 +32,11 @@ public class Player extends GameObject {
     }
 
     public void updatePlayerPosition(double timeStep){
-        double newX = pos.getX() + velocity*timeStep * Math.cos(direction * Math.PI / 180);
-        double newY = pos.getY() + velocity*timeStep * Math.sin(direction * Math.PI / 180);
+        double newX = pos.getX() + velocity*timeStep * Math.cos(Math.toRadians(direction));
+        double newY = pos.getY() + velocity*timeStep * Math.sin(Math.toRadians(direction));
 
         pos.setLocation(newX, newY);
         rayCaster.updateRaysPos(pos);
-
 
     }
 
@@ -55,6 +51,10 @@ public class Player extends GameObject {
 
     public RayCaster getRaycaster() {
         return rayCaster;
+    }
+
+    public double getDirection() {
+        return direction;
     }
 
 }

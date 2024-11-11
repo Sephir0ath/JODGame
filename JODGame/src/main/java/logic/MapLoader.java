@@ -14,14 +14,14 @@ import java.util.Objects;
 import java.util.Random;
 
 public class MapLoader extends JPanel {
-    private int mapColumnsSize;
     private int playerRowLocation, playerColLocation;
-    private int mapRowsSize;
-    private int tileHeight, tileWidth;
-    private Player player;
     private ArrayList<GameObject> gameObjects;
+    private int tileHeight, tileWidth;
     private ArrayList<Wall> walls;
     private RayCaster rayCaster;
+    private int mapColumnsSize;
+    private int mapRowsSize;
+    private Player player;
     public MapLoader(Player player, String mapFile) {
         super();
         this.player = player;
@@ -31,6 +31,7 @@ public class MapLoader extends JPanel {
         mapColumnsSize = 0;
 
 
+        // Abrir el archivo del nivel y contar cuantas filas y columnas tiene para determinar el tamaño de cada objeto estatico
         try{
             BufferedReader reader1 = new BufferedReader(new FileReader(mapFile));
             String line;
@@ -48,9 +49,7 @@ public class MapLoader extends JPanel {
         tileWidth = Window.getInstance().getWidth() / mapColumnsSize;
         tileHeight = Window.getInstance().getHeight() / mapRowsSize;
 
-
-
-
+        // Abrir nuevamente el archivo para poder guardar todos los objetos estaticos en un arreglo para poder pintarlos
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mapFile));
             String line;
@@ -73,11 +72,6 @@ public class MapLoader extends JPanel {
                             playerColLocation = i;
                             break;
 
-                        /*case '3':
-                            //Enemy enemigo = new Enemy("player.png");
-                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
-                            Enemy enemigo = new Enemy(columnas * tileWidth, filas * tileHeight)
-                            ArrayEnemigos.add(enemigo);*/
                     }
 
 
@@ -92,7 +86,9 @@ public class MapLoader extends JPanel {
             throw new RuntimeException(e);
         }
 
+
         player.setPos(new Point(playerRowLocation*tileHeight, playerColLocation*tileWidth));
+        System.out.println(player.getPos());
 
     }
 
@@ -101,7 +97,7 @@ public class MapLoader extends JPanel {
         int currentColumn = 0;
         int currentRow = 0;
 
-
+        // Dibujar los objetos
         for (GameObject gameObject : gameObjects) {
             if (gameObject instanceof NullSpace) {
                 g.setColor(Color.BLACK);
@@ -120,6 +116,7 @@ public class MapLoader extends JPanel {
 
         }
 
+        // Raycasting del jugador
         RayCaster playerRayCaster = player.getRaycaster();
         g.setColor(Color.GREEN);
         ArrayList<Point> endPoints = playerRayCaster.lookWalls(walls);
@@ -141,7 +138,12 @@ public class MapLoader extends JPanel {
             g.drawLine(playerRayCaster.getRaysArray().get(i).getPos().x, playerRayCaster.getRaysArray().get(i).getPos().y, endPoints.get(i).x, endPoints.get(i).y);
         }
 
+        // Dibujar el jugador
         g.drawImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("player.png"))).getImage(), player.getPos().x, player.getPos().y,null);
+    }
+
+    public Point getPlayerFirstLocation(){
+        return new Point(tileWidth*playerColLocation, tileHeight*playerRowLocation);
     }
 
 }

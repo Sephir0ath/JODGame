@@ -23,9 +23,15 @@ public class PlayerController implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        pressedKeys.add(e.getKeyCode());
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && PrincipalPanel.getInstance().isActualPanelAMap()) {
+            PrincipalPanel.getInstance().showPanel("MainMenu");
 
-        handlePlayerMovement();
+        }
+        else{
+            pressedKeys.add(e.getKeyCode());
+
+            handlePlayerMovement();
+        }
     }
 
     @Override
@@ -41,26 +47,29 @@ public class PlayerController implements KeyListener {
     }
 
     private void handlePlayerMovement(){
-        player.setVelocity(0);
-
-        if (pressedKeys.contains(KeyEvent.VK_W)){
-            player.setVelocity(200);
-        }
-
-        else if (pressedKeys.contains(KeyEvent.VK_S)){
-            player.setVelocity(-200);
-        }
-        else{
-            player.setVelocity(0);
-        }
+        int velocity = 0;
+        int directionChange = 0;
 
         if (pressedKeys.contains(KeyEvent.VK_A)){
-            player.addToDirection(-5);
+            directionChange -= 5;
         }
 
         if (pressedKeys.contains(KeyEvent.VK_D)){
-            player.addToDirection(5);
+            directionChange += 5;
         }
 
+        if (pressedKeys.contains(KeyEvent.VK_W)){
+            velocity = 200;
+        }
+
+        if (pressedKeys.contains(KeyEvent.VK_S)){
+            velocity = -200;
+        }
+
+
+
+
+        player.addToDirection(directionChange);
+        player.setVelocity(velocity);
     }
 }
