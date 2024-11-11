@@ -54,9 +54,9 @@ public class MapLoader extends JPanel {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(mapFile));
             String line;
-            int counter = 0;
+            int counter = 0; // Filas
             while ((line = reader.readLine()) != null){
-                for (int i = 0; i < mapColumnsSize; i++) {
+                for (int i = 0; i < mapColumnsSize; i++) { // Columnas
                     switch (line.charAt(i)){
                         case '0':
                             gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
@@ -72,6 +72,12 @@ public class MapLoader extends JPanel {
                             playerRowLocation = counter;
                             playerColLocation = i;
                             break;
+
+                        /*case '3':
+                            //Enemy enemigo = new Enemy("player.png");
+                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
+                            Enemy enemigo = new Enemy(columnas * tileWidth, filas * tileHeight)
+                            ArrayEnemigos.add(enemigo);*/
                     }
 
 
@@ -118,12 +124,21 @@ public class MapLoader extends JPanel {
         g.setColor(Color.GREEN);
         ArrayList<Point> endPoints = playerRayCaster.lookWalls(walls);
 
+        /*
+        for (int i = 0; i < ArrayEnemigos.length; i++){
+            ArrayEnemigos.move();
+
+            ArrayList<Point> endPoints2 = ArrayEnemigos.get(i).getRayCaster().lookwalls(walls);
+            for (int j = 0; j < endPoints2.size(); j++){
+                g.drawLine(ArrayEnemigos.get(i).getPos().x, ArrayEnemigos.get(i).getPos().y, endPoints2.get(j).x, endPoints2.get(j).y);
+            }
+
+
+        }
+        */
+
         for (int i = 0; i < endPoints.size(); i++) {
             g.drawLine(playerRayCaster.getRaysArray().get(i).getPos().x, playerRayCaster.getRaysArray().get(i).getPos().y, endPoints.get(i).x, endPoints.get(i).y);
-         //   System.out.println(i);
-         //   System.out.println(playerRayCaster.getRaysArray().get(i).getDirectionX());
-         //   System.out.println(playerRayCaster.getRaysArray().get(i).getDirectionY());
-
         }
 
         g.drawImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("player.png"))).getImage(), player.getPos().x, player.getPos().y,null);
