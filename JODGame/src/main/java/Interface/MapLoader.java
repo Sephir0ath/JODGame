@@ -5,10 +5,7 @@ import logic.Enemies.Enemy;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -16,16 +13,17 @@ public class MapLoader extends JPanel {
     private int playerRowLocation, playerColLocation;
     private ArrayList<GameObject> gameObjects;
     private int tileHeight, tileWidth;
-    private ArrayList<Wall> walls;
     private ArrayList<Enemy> enemies;
+    private ArrayList<Wall> walls;
     private RayCaster rayCaster;
     private int mapColumnsSize;
-    private int mapRowsSize;
     private int[][] mapMatrix;
+    private int mapRowsSize;
     private Player player;
     public MapLoader(Player player, String mapFile) {
         super();
         this.player = player;
+        this.setBackground(Color.gray);
         gameObjects = new ArrayList<>();
         walls = new ArrayList<>();
         enemies = new ArrayList<>();
@@ -64,26 +62,26 @@ public class MapLoader extends JPanel {
                 for (int i = 0; i < mapColumnsSize; i++) { // Columnas
                     switch (line.charAt(i)){
                         case '0':
-                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
+                            gameObjects.add(new Tile(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Tile3.png")))));
                             mapMatrix[row][i] = 0;
                             break;
 
                         case '1':
-                            gameObjects.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
-                            walls.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall.png")))));
+                            gameObjects.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall1.png")))));
+                            walls.add(new Wall(new Point(i*tileWidth, row*tileHeight),tileHeight, tileWidth, new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Wall1.png")))));
                             mapMatrix[row][i] = 1;
                             break;
 
                         case '2':
-                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
+                            gameObjects.add(new Tile(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Tile3.png")))));
                             playerRowLocation = row;
                             playerColLocation = i;
                             mapMatrix[row][i] = 2;
                             break;
 
                         case '3':
-                            gameObjects.add(new NullSpace(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png")))));
-                            ImageIcon enemyImg = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("enemy.png")));
+                            gameObjects.add(new Tile(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("Tile3.png")))));
+                            ImageIcon enemyImg = new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("enemy2.png")));
                             Enemy enemy = new Enemy(enemyImg, new Point(i * tileWidth + tileWidth/2, row * tileHeight + tileHeight/2));
                             enemies.add(enemy);
                             mapMatrix[row][i] = 3;
@@ -105,23 +103,24 @@ public class MapLoader extends JPanel {
 
 
         player.setPos(new Point(playerRowLocation*tileHeight, playerColLocation*tileWidth));
-        System.out.println(player.getPos());
 
     }
 
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g){
         super.paintComponent(g);
+
         int currentColumn = 0;
         int currentRow = 0;
 
-        // Dibujar los objetos
+        // Dibujar los objetos ACA AGREGAR IMAGENES Y AÑADIR UN METODO PARA REDIMENSIONAR IMAGENES A TAMAÑO DE CELDA
         for (GameObject gameObject : gameObjects) {
-            if (gameObject instanceof NullSpace) {
-                g.setColor(Color.BLACK);
-                g.fillRect(currentColumn * tileWidth, currentRow * tileHeight, 800 / mapColumnsSize, 800 / mapRowsSize);
+            Image textureImage = gameObject.getTexture().getImage();
+            if (gameObject instanceof Tile) {
+                g.drawImage(textureImage, currentColumn * tileWidth, currentRow * tileHeight,tileWidth, tileHeight, null);
             } else if (gameObject instanceof Wall) {
-                g.setColor(Color.WHITE);
-                g.fillRect(currentColumn * tileWidth, currentRow * tileHeight, 800 / mapColumnsSize, 800 / mapRowsSize);
+                g.drawImage(textureImage, currentColumn * tileWidth, currentRow * tileHeight,tileWidth, tileHeight, null);
+
+
             }
 
             currentColumn++;
@@ -135,7 +134,7 @@ public class MapLoader extends JPanel {
 
         // Raycasting del jugador
         RayCaster playerRayCaster = player.getRaycaster();
-        ArrayList<Point> endPoints = playerRayCaster.lookForObstacles(walls, player.getPlayerWall(), true);
+        ArrayList<Point> endPoints = playerRayCaster.lookForObstacles(walls, player.getPlayerWall(), true, null);
 
         g.setColor(Color.GREEN);
         for (int i = 0; i < endPoints.size(); i++) {
@@ -143,6 +142,8 @@ public class MapLoader extends JPanel {
         }
 
         // Dibujar el jugador
+
+        //d.drawImage(ImageIO.read(new File("src/main/resources/player.png")), player.getPos().x, player.getPos().y,null);
         g.drawImage(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("player.png"))).getImage(), player.getPos().x, player.getPos().y,null);
         // Dibujar muro interno del jugador (por ahora para comprobar que funcione bien)
         ArrayList<Line> playerWallLines = player.getPlayerWall().getLines();
@@ -154,13 +155,13 @@ public class MapLoader extends JPanel {
         for(Enemy enemy : enemies) {
             // enemy.setDetectingPlayer(false);
             g.setColor(Color.RED);
+
             g.drawImage(enemy.getTexture().getImage(), enemy.getPos().x, enemy.getPos().y, null);
             RayCaster enemyRayCaster = enemy.getRaycaster();
-            ArrayList<Point> enemyEndPoints = enemyRayCaster.lookForObstacles(walls, player.getPlayerWall(), false);
+            ArrayList<Point> enemyEndPoints = enemyRayCaster.lookForObstacles(walls, player.getPlayerWall(), false, enemy);
 
-            for(Point endPoint : enemyEndPoints) {
-                g.drawLine(enemy.getPos().x, enemy.getPos().y, endPoint.x, endPoint.y);
-
+            for (int i = 0; i < endPoints.size(); i++) {
+                g.drawLine(enemyRayCaster.getRaysArray().get(i).getPos().x, enemyRayCaster.getRaysArray().get(i).getPos().y, enemyEndPoints.get(i).x, enemyEndPoints.get(i).y);
             }
 
         }

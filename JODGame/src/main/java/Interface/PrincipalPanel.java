@@ -8,6 +8,7 @@ import logic.Enemies.ActiveEnemyMovement;
 import logic.Enemies.Enemy;
 import logic.Enemies.PassiveEnemyMovement;
 import logic.Player;
+import logic.Wall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,20 +19,22 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class PrincipalPanel extends JPanel {
-    private PlayerController playerController;
-    private EnemyController enemyController;
     private PassiveEnemyMovement passiveEnemyMovement;
     private ActiveEnemyMovement activeEnemyMovement;
-    private ArrayList<MapLoader> premadeMaps;
-    private static PrincipalPanel instance;
+    private PlayerController playerController;
     private static boolean isActualPanelAMap;
+    private ArrayList<MapLoader> premadeMaps;
+    private EnemyController enemyController;
+    private static PrincipalPanel instance;
+    private ArrayList<Wall> wallArrayList;
     private CardLayout cardLayout;
+    private MapLoader mapLoader;
     private final Player player;
     private JPanel actualPanel;
-    private MapLoader mapLoader;
 
     public PrincipalPanel() {
         super();
+        wallArrayList = new ArrayList<>();
         this.player = new Player(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png"))));
         premadeMaps = new ArrayList<>();
         cardLayout = new CardLayout();
@@ -75,34 +78,38 @@ public class PrincipalPanel extends JPanel {
         updateScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                player.updatePlayerPosition(0.016);
                 if (isActualPanelAMap) {
+                    player.updatePlayerPosition(0.016);
+
+                    for (int i = 0; i < wallArrayList.size(); i++) {
+                        player.checkIntersectionWithHitBox(wallArrayList.get(i));
+                    }
                     mapLoader.repaint();
                 }
 
             }
-        }, 5000, 10, TimeUnit.MILLISECONDS);
+        }, 0, 10, TimeUnit.MILLISECONDS);
 
 
         // ES POSIBLE QUE USAR ESTE OTRO HILO PARA LOS ENEMIGOS CAUSE EXCEPCIONES DE CONCURRENCIA
-        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(2);
+        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(8);
         addKeyListener(enemyController);
         enemiesScheduler.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                enemyController.updateAllEnemiesPositions(0.016);
-                for(Enemy enemy : passiveEnemyMovement.getEnemies()) {
+                if (isActualPanelAMap) {
+                    enemyController.updateAllEnemiesPositions(0.016);
+                    for(Enemy enemy : passiveEnemyMovement.getEnemies()) {
 //                    if(!enemy.isDetectingPlayer()) {
 //                        passiveEnemyMovement.moveEnemy(enemy);
 //                    }
-                    passiveEnemyMovement.moveEnemy(enemy);
+                        passiveEnemyMovement.moveEnemy(enemy);
 
-                }
-                if (isActualPanelAMap) {
+                    }
                     mapLoader.repaint();
                 }
             }
-        }, 5000, 10, TimeUnit.MILLISECONDS);
+        }, 0, 10, TimeUnit.MILLISECONDS);
 
     }
 
@@ -116,6 +123,7 @@ public class PrincipalPanel extends JPanel {
             isActualPanelAMap = true;
             mapLoader = premadeMaps.get(Character.getNumericValue(panelName.charAt(panelName.length() - 1))); // Obtener el index del ultimo digito del String de panelName
             player.setPos(mapLoader.getPlayerFirstLocation());
+            wallArrayList = mapLoader.getWalls();
 
             enemyController.setEnemiesArray(mapLoader.getEnemies()); // -> Para movimiento con teclado (para test)
 

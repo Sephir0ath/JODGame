@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class PassiveEnemyMovement {
+    private Rectangle patrolZone;
     private int[][] mapMatrix;
     ArrayList<Enemy> enemies;
-    ArrayList<Wall> walls;
-    Player player;
-    private Rectangle patrolZone;
-    private Random rand;
-    private int tileWidth;
     private int tileHeight;
+    private int tileWidth;
+    ArrayList<Wall> walls;
+    private Random rand;
+    Player player;
 
 
     public PassiveEnemyMovement() {
@@ -167,13 +167,13 @@ public class PassiveEnemyMovement {
 
     public boolean isObstacleNearby(Enemy enemy) {
         RayCaster enemyRayCaster = enemy.getRaycaster();
-        ArrayList<Point> enemyEndPoints = enemyRayCaster.lookForObstacles(walls, player.getPlayerWall(), false);
+        ArrayList<Point> enemyEndPoints = enemyRayCaster.lookForObstacles(walls, player.getPlayerWall(), true, enemy);
 
         for(Point enemyEndPoint : enemyEndPoints) {
             double deltaX = enemyEndPoint.x - enemy.getPos().x;
             double deltaY = enemyEndPoint.y - enemy.getPos().y;
             double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            if(distance < 15){
+            if(distance < 25){
                 return true;
             }
         }

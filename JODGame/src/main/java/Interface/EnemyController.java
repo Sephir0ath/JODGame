@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class EnemyController implements KeyListener {
-    private ArrayList<Enemy> enemies;
     private final Set<Integer> pressedKeys;
+    private ArrayList<Enemy> enemies;
 
     public EnemyController() {
         this.pressedKeys = new HashSet<>();

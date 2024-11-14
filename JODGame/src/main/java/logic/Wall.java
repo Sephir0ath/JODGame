@@ -6,14 +6,16 @@ import java.util.ArrayList;
 
 public class Wall extends GameObject {
     private ArrayList<Point> WallVertices;
+    private Point bottomRightPoint;
+    private Point bottomLeftPoint;
     private ArrayList<Line> lines;
-    private Point a;
+    private Point topRightPoint;
+    private Point topLeftPoint;
+    private Rectangle hitBox;
     private int height;
     private int width;
-    Point topLeftPoint;
-    Point topRightPoint;
-    Point bottomLeftPoint;
-    Point bottomRightPoint;
+    private Point a;
+
     public Wall(Point a, int height, int width, ImageIcon texture) {
         super(texture);
         this.height = height;
@@ -27,6 +29,7 @@ public class Wall extends GameObject {
         lines.add(new Line(bottomLeftPoint, bottomRightPoint));
         lines.add(new Line(bottomLeftPoint, topLeftPoint));
         lines.add(new Line(bottomRightPoint, topRightPoint));
+        hitBox = new Rectangle(topLeftPoint.x, topLeftPoint.y, width, height);
 
     }
 
@@ -59,6 +62,10 @@ public class Wall extends GameObject {
 
         return x >= left && x <= right && y >= top && y <= bottom;
 
+    }
+
+    public Rectangle getHitBox() {
+        return hitBox;
     }
 
 }

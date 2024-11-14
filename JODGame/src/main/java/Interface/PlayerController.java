@@ -8,11 +8,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PlayerController implements KeyListener {
-    private final Player player;
     private final Set<Integer> pressedKeys;
+    private final Player player;
+
     public PlayerController(Player player) {
-        this.player = player;
         this.pressedKeys = new HashSet<>();
+        this.player = player;
     }
 
 

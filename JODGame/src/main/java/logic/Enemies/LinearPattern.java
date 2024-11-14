@@ -4,11 +4,10 @@ import java.awt.*;
 
 
 public class LinearPattern extends MovementPattern {
+    private boolean movingToEnd = true;
+    private Rectangle patrolZone;
     private Point startPoint;
     private Point endPoint;
-    private Rectangle patrolZone;
-    private boolean movingToEnd = true;
-
 
     public LinearPattern(Point startPoint, Point endPoint, Rectangle patrolZone) {
         super(startPoint, endPoint, patrolZone);

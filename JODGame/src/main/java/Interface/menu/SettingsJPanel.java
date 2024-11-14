@@ -4,12 +4,14 @@ import Interface.PrincipalPanel;
 import Interface.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SettingsJPanel extends JPanel {
     public SettingsJPanel() {
         this.setLayout(null);
+        this.setBackground(Color.orange);
         JButton backButton = new JButton("Back");
         JButton creditsButton = new JButton("Credits");
 

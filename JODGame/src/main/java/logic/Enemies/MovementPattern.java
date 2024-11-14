@@ -3,9 +3,9 @@ package logic.Enemies;
 import java.awt.*;
 
 public abstract class MovementPattern {
+    protected Rectangle patrolZone;
     protected Point startPoint;
     protected Point endPoint;
-    protected Rectangle patrolZone;
 
     public MovementPattern(Point startPoint, Point endPoint, Rectangle patrolZone) {
         this.startPoint = startPoint;

@@ -5,6 +5,7 @@ import java.awt.*;
 
 public abstract class GameObject {
     protected final ImageIcon texture;
+
     public GameObject(ImageIcon texture) {
         this.texture = texture;
     }
@@ -14,7 +15,7 @@ public abstract class GameObject {
     }
 /*
     public Point getPosition(){
-        returnsd position;
+        return position;
     }
 */
 }

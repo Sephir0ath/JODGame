@@ -4,12 +4,14 @@ import Interface.PrincipalPanel;
 import Interface.Window;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreditsJPanel extends JPanel {
     public CreditsJPanel() {
         this.setLayout(null);
+        this.setBackground(Color.cyan);
         String[] CreditsStrings = {"Authors:", "Juan Felipe Raysz Muñoz (Sephir)", "Oliver Isaías Peñailillo Sanzana (Pyrrss)", "Diego Emilio Rebollo García (Diego52_H)"};
         JButton backButton = new JButton("Back");
 

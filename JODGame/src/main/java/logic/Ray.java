@@ -3,9 +3,10 @@ package logic;
 import java.awt.*;
 
 public class Ray {
-    private Point pos;
-    private double directionX;
     private double directionY;
+    private double directionX;
+    private Point pos;
+
     public Ray(Point pos, int angle) {
         this.pos = pos;
         this.directionX = Math.cos(angle*Math.PI/180);
@@ -14,6 +15,8 @@ public class Ray {
 
     public float[] cast(Line linePoints) {
         float[] intersectPoint = new float[2];
+
+        if(linePoints == null) return null;
         double x1 = linePoints.getStartPoint().x, y1 = linePoints.getStartPoint().y, x2 = linePoints.getEndPoint().x, y2 = linePoints.getEndPoint().y;
         double x3 = pos.x, y3 = pos.y, x4 = pos.x + directionX, y4 = pos.y + directionY;
 

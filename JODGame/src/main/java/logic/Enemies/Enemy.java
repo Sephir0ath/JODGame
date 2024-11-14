@@ -7,16 +7,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Enemy extends GameObject {
-    private RayCaster rayCaster;
-    private Point pos;
-    private double direction;
-    private int velocity;
     // private Rectangle bounds; -> Por ahora no se para que usarlo
     private MovementPattern movementPattern;
     private boolean isDetectingPlayer;
+    private RayCaster rayCaster;
+    private double direction;
+    private int velocity;
+    private Point pos;
+    private int width;
+    private int height;
 
     public Enemy(ImageIcon img, Point pos){
         super(img);
+        width = img.getIconWidth();
+        height = img.getIconHeight();
         this.pos = pos;
         this.rayCaster = new RayCaster(this.pos);
 
@@ -35,7 +39,7 @@ public class Enemy extends GameObject {
         double newY = pos.getY() + velocity*timeStep * Math.sin(Math.toRadians(direction));
 
         this.pos.setLocation(newX, newY);
-        rayCaster.updateRaysPos(pos);
+        rayCaster.updateRaysPos(new Point(pos.x+width/2, pos.y+height/2));
 
     }
 
@@ -59,7 +63,7 @@ public class Enemy extends GameObject {
 
     public void setPos(Point pos) {
         this.pos = pos;
-        rayCaster.updateRaysPos(pos);
+        rayCaster.updateRaysPos(new Point(pos.x+width/2, pos.y+height/2));
     }
 
     public double getDirection() {
@@ -78,10 +82,10 @@ public class Enemy extends GameObject {
         return movementPattern;
     }
 
-//    public void setDetectingPlayer(boolean detectingPlayer) {
-//        this.isDetectingPlayer = detectingPlayer;
-//    }
-//    public boolean isDetectingPlayer() {
-//        return isDetectingPlayer;
-//    }
+    public void setDetectingPlayer(boolean detectingPlayer) {
+        this.isDetectingPlayer = detectingPlayer;
+    }
+    public boolean isDetectingPlayer() {
+        return isDetectingPlayer;
+    }
 }

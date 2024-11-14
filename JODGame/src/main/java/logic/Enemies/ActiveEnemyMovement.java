@@ -7,13 +7,13 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class ActiveEnemyMovement {
-    private int[][] mapMatrix;
     private int[][] costMatrix;
+    private int[][] mapMatrix;
     ArrayList<Enemy> enemies;
-    ArrayList<Wall> walls;
-    Player player;
-    private int tileWidth;
     private int tileHeight;
+    ArrayList<Wall> walls;
+    private int tileWidth;
+    Player player;
 
     public ActiveEnemyMovement() {
         this.mapMatrix = null;

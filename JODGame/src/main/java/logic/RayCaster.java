@@ -6,8 +6,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class RayCaster {
-    private ArrayList<Ray> raysArray;
     private final int MAX_DISTANCE_VIEW = 300;
+    private ArrayList<Ray> raysArray;
 
     public RayCaster(Point pos) {
         raysArray = new ArrayList<>();
@@ -24,16 +24,16 @@ public class RayCaster {
     }
 
     public void updateRaysDirection(double direction){
-        for (int i = 0; i < 44; i++) { // Assuming there are 44 rays (-22 to +21 degrees)
+        for (int i = 0; i < 44; i++) {
             raysArray.get(i).setDirection(Math.cos(Math.toRadians(direction+i -22)), Math.sin(Math.toRadians(direction+i -22)));
         }
 
     }
 
-    public ArrayList<Point> lookForObstacles(ArrayList<Wall> walls, Wall playerWall, boolean ignorePlayerWall) {
+    public ArrayList<Point> lookForObstacles(ArrayList<Wall> walls, Wall playerWall, boolean ignorePlayerWall, Enemy enemy) {
         double[] endPoint = new double[2];
         ArrayList<Point> endPoints = new ArrayList<>();
-        // boolean playerWallDetected = false; // -> Para enemigos
+        boolean playerWallDetected = false; // -> Para enemigos
 
         for (Ray ray : raysArray) {
             float minDistance = 10000;
@@ -53,7 +53,7 @@ public class RayCaster {
                         if (dist < minDistance) {
                             minDistance = dist;
                             closestIntersectPoint = intersectPoint;
-                            // playerWallDetected = true;
+        //                    playerWallDetected = true;
                         }
                     }
                 }
@@ -71,7 +71,7 @@ public class RayCaster {
                         if (dist < minDistance) {
                             minDistance = dist;
                             closestIntersectPoint = intersectPoint;
-                            // playerWallDetected = false;
+        //                    playerWallDetected = false;
                         }
                     }
                 }
@@ -82,10 +82,9 @@ public class RayCaster {
                 endPoint[0] = closestIntersectPoint[0];
                 endPoint[1] = closestIntersectPoint[1];
                 endPoints.add(new Point((int) endPoint[0], (int) endPoint[1]));
-//                if (playerWallDetected && enemy instanceof Enemy) {
-//                    ((Enemy) enemy).setDetectingPlayer(true);
-//
-//                }
+                //if(enemy != null && playerWallDetected) {
+                //    ((Enemy) enemy).setDetectingPlayer(true);
+                //}
 
             } else {
                 endPoint[0] = ray.getPos().x + ray.getDirectionX() * MAX_DISTANCE_VIEW;

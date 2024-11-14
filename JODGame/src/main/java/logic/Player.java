@@ -6,15 +6,21 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Player extends GameObject {
+    private ImageIcon playerWallTexture; // -> Solo por ahora para verificar muro de jugador
     private RayCaster rayCaster;
+    private Rectangle hitBox;
     private double direction;
+    private Wall playerWall; // -> Para deteccion enemigo a jugador
     private int velocity = 0;
     private Point pos;
-    private Wall playerWall; // -> Para deteccion enemigo a jugador
-    private ImageIcon playerWallTexture; // -> Solo por ahora para verificar muro de jugador
+    private int width;
+    private int height;
 
     public Player(ImageIcon img) {
         super(img);
+        width = img.getIconWidth();
+        height = img.getIconHeight();
+        hitBox = new Rectangle(20,20);
         rayCaster = new RayCaster(new Point(0,0));
         playerWall = new Wall(new Point(0,0), img.getIconHeight(), img.getIconWidth(), null);
     }
@@ -24,6 +30,64 @@ public class Player extends GameObject {
         direction += value;
         normalizeDirection();
         rayCaster.updateRaysDirection(direction);
+    }
+
+    public void checkIntersectionWithHitBox(Wall wall) {
+        if (hitBox.intersects(wall.getHitBox())) {
+            handleCollisionWithWall(wall);
+        }
+    }
+    public int getCollisionSide(Rectangle rectangle) {
+        double hitBoxRight = hitBox.getX() + hitBox.getWidth();
+        double hitBoxBottom = hitBox.getY() + hitBox.getHeight();
+        double rectangleRight = rectangle.getX() + rectangle.getWidth();
+        double rectangleBottom = rectangle.getY() + rectangle.getHeight();
+
+        double topOverlap = hitBoxBottom - rectangle.getY();
+        double bottomOverlap = rectangleBottom - hitBox.getY();
+        double leftOverlap = hitBoxRight - rectangle.getX();
+        double rightOverlap = rectangleRight - hitBox.getX();
+
+        double minOverlap = Math.min(Math.min(topOverlap, bottomOverlap), Math.min(leftOverlap, rightOverlap));
+
+        if (minOverlap == topOverlap) {
+            return 0; // Top
+        } else if (minOverlap == leftOverlap) {
+            return 1; // Left
+        } else if (minOverlap == rightOverlap) {
+            return 2; // Right
+        } else if (minOverlap == bottomOverlap) {
+            return 3; // Bottom
+        } else {
+            return 4; // No collision
+        }
+    }
+
+    public void handleCollisionWithWall(Wall wall) {
+        switch (getCollisionSide(wall.getHitBox())) {
+            case 0: // Top
+                setPos(new Point(getPos().x, (int) (wall.getHitBox().getY() - hitBox.getHeight())));
+                setVelocity(0);
+                break;
+
+            case 1: // Left
+                setPos(new Point((int) (wall.getHitBox().getX() - hitBox.getWidth()), getPos().y));
+                setVelocity(0);
+                break;
+
+            case 2: // Right
+                setPos(new Point((int) (wall.getHitBox().getX() + wall.getHitBox().getWidth()), getPos().y));
+                setVelocity(0);
+                break;
+
+            case 3: // Bottom
+                setPos(new Point(getPos().x, (int) (wall.getHitBox().getY() + wall.getHitBox().getHeight())));
+                setVelocity(0);
+                break;
+                
+            default:
+                break;
+        }
     }
 
 
@@ -42,7 +106,8 @@ public class Player extends GameObject {
         double newY = pos.getY() + velocity*timeStep * Math.sin(Math.toRadians(direction));
 
         pos.setLocation(newX, newY);
-        rayCaster.updateRaysPos(pos);
+        rayCaster.updateRaysPos(new Point(pos.x + width/2, pos.y + height/2));
+        hitBox.setLocation((int) newX, (int) newY);
 
         playerWall.updatePosition(pos);
     }
@@ -55,9 +120,13 @@ public class Player extends GameObject {
     public void setPos(Point pos) {
         this.pos = pos;
         playerWall.updatePosition(pos);
-        rayCaster.updateRaysPos(pos);
+        rayCaster.updateRaysPos(new Point(pos.x+width/2, pos.y+height/2));
+        hitBox.setLocation((int) pos.getX(), (int) pos.getY());
     }
 
+    public Rectangle getHitBox(){
+        return hitBox;
+    }
 
     public RayCaster getRaycaster() {
         return rayCaster;
