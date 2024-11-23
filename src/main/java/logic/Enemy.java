@@ -7,7 +7,7 @@ public class Enemy extends GameNode
 	private double targetDirection;
 	
 	private Vector2 target;
-	public MovementZone movementZone;
+	private MovementZone movementZone;
 	
 	private RayCaster rayCaster;
 	
@@ -23,6 +23,11 @@ public class Enemy extends GameNode
 		this.rayCaster = new RayCaster(position);
 		
 		this.setTarget(this.movementZone.chooseLocation(this.position));
+	}
+	
+	public MovementZone getMovementZone()
+	{
+		return this.movementZone;
 	}
 	
 	public RayCaster getRayCaster()

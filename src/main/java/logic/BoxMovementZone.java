@@ -2,17 +2,13 @@ package logic;
 
 public class BoxMovementZone extends MovementZone
 {
-	public double sizeX;
-	public double sizeY;
+	public Vector2 dims;
+	public Vector2 position;
 	
-	public Vector2 center;
-	
-	public BoxMovementZone(double sizeX, double sizeY, Vector2 center)
+	public BoxMovementZone(Vector2 position, Vector2 dims)
 	{
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		
-		this.center = center;
+		this.dims = dims;
+		this.position = position;
 	}
 	
 	@Override
@@ -23,8 +19,8 @@ public class BoxMovementZone extends MovementZone
 		int sign1 = (Math.random() < 0.5) ? -1 : 1;
 		int sign2 = (Math.random() < 0.5) ? -1 : 1;
 		
-		location.x = this.center.x + (sign1 * (Math.random() * (this.sizeX / 2)));
-		location.y = this.center.y + (sign2 * (Math.random() * (this.sizeY / 2)));
+		location.x = this.position.x + (sign1 * (Math.random() * (this.dims.x / 2)));
+		location.y = this.position.y + (sign2 * (Math.random() * (this.dims.y / 2)));
 		
 		return location;
 	}

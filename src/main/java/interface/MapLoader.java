@@ -18,8 +18,11 @@ public class MapLoader extends JPanel
 	private ArrayList<GameNode> nodes;
 	private ArrayList<Enemy> enemies;
 	
-	private double tileW;
-	private double tileH;
+	private double tileW = 80;
+	private double tileH = 80;
+	
+	private final double windowSizeX = Window.getInstance().getContentPane().getSize().getWidth();
+	private final double windowSizeY = Window.getInstance().getContentPane().getSize().getHeight();
 	
 	private Vector2 spawn;
 	
@@ -57,8 +60,8 @@ public class MapLoader extends JPanel
 			}
 		}
 		
-		this.tileW = Window.getInstance().getWidth() / colCount;
-		this.tileH = Window.getInstance().getHeight() / rowCount;
+		// this.tileW = Window.getInstance().getContentPane().getSize().getWidth() / colCount;
+		// this.tileH = Window.getInstance().getContentPane().getSize().getHeight() / rowCount;
 		
 		try(BufferedReader reader = new BufferedReader(new FileReader(file)))
 		{
@@ -85,28 +88,42 @@ public class MapLoader extends JPanel
 						{
 							node = new Tile(position);
 							
-							graphicsComponent = new GraphicsComponent(node, textureTile);
+							graphicsComponent = new GraphicsComponent(node, textureTile, new Vector2(this.tileW, this.tileH));
 						} break;
 						
 						case '1':
 						{
 							node = new Wall(position);
 							
-							graphicsComponent = new GraphicsComponent(node, textureWall);
+							graphicsComponent = new GraphicsComponent(node, textureWall, new Vector2(this.tileW, this.tileH));
 							collisionComponent = new CollisionComponent(node, new Vector2(this.tileW, this.tileH));
 						} break;
 						
 						case '2':
 						{
 							this.spawn = position;
+							
+							node = new Tile(new Vector2(position));
+							
+							graphicsComponent = new GraphicsComponent(node, textureTile, new Vector2(this.tileW, this.tileH));
 						} break;
 						
 						case '3':
 						{
+							{
+								GameNode auxNode = new Tile(new Vector2(position));
+								
+								graphicsComponent = new GraphicsComponent(auxNode, textureTile, new Vector2(this.tileW, this.tileH));
+								
+								auxNode.setGraphicsComponent(graphicsComponent);
+								
+								this.nodes.add(auxNode);
+							}
+							
 							MovementZone movementZone = null;
 							
 							if(Math.random() < 0.5)
-								movementZone = new BoxMovementZone(100, 100, new Vector2(position));
+								movementZone = new BoxMovementZone(new Vector2(position), new Vector2(100, 100));
 							
 							else
 							{
@@ -130,7 +147,7 @@ public class MapLoader extends JPanel
 							
 							node = new Enemy(position, movementZone);
 							
-							graphicsComponent = new GraphicsComponent(node, textureEnemy);
+							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(25, 25));
 							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
 						} break;
 					}
@@ -158,7 +175,7 @@ public class MapLoader extends JPanel
 		
 		this.player = player;
 		{
-			GraphicsComponent graphicsComponent = new GraphicsComponent(this.player, texturePlayer);
+			GraphicsComponent graphicsComponent = new GraphicsComponent(this.player, texturePlayer, new Vector2(25, 25));
 			CollisionComponent collisionComponent = new CollisionComponent(this.player, new Vector2(25, 25));
 			
 			this.player.setGraphicsComponent(graphicsComponent);
@@ -167,30 +184,17 @@ public class MapLoader extends JPanel
 		
 		nodes.add(this.player);
 		
-		player.setPosition(spawn);
+		this.player.setPosition(spawn);
+		
+		System.out.println(spawn.x + " " + spawn.y);
 	}
 	
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	protected void paintComponent(Graphics renderer) {
+		super.paintComponent(renderer);
 		
-		// Renderizar
-		for(GameNode node : nodes)
-		{
-			Vector2 position = node.getPosition();
-			
-			GraphicsComponent graphicsComponent = node.getGraphicsComponent();
-			
-			if(graphicsComponent == null)
-				continue;
-			
-			double sizeX = graphicsComponent.getTexture().getImage().getWidth(null);
-			double sizeY = graphicsComponent.getTexture().getImage().getHeight(null);
-			
-			g.drawImage(graphicsComponent.getTexture().getImage(), (int) (position.x - (sizeX / 2)), (int) (position.y - (sizeY / 2)), null);
-		}
+		/* colisiones */
 		
-		// Colisiones
 		for(GameNode nodeA : nodes)
 		{
 			for(GameNode nodeB : nodes)
@@ -208,16 +212,23 @@ public class MapLoader extends JPanel
 				{
 					nodeA.manageCollision(nodeB);
 					nodeB.manageCollision(nodeA);
-					
-					Vector2 positionA = nodeA.getPosition();
-					Vector2 positionB = nodeB.getPosition();
-					
-					g.setColor(Color.WHITE);
-					g.fillOval((int) positionA.x, (int) positionA.y, 10, 10);
-					g.fillOval((int) positionB.x, (int) positionB.y, 10, 10);
 				}
 			}
 		}
+		
+		/* renderizar */
+		
+		for(GameNode node : nodes)
+		{
+			GraphicsComponent graphicsComponent = node.getGraphicsComponent();
+			
+			if(graphicsComponent == null)
+				continue;
+			
+			this.render(renderer, graphicsComponent);
+		}
+		
+		/* raycasting */
 		
 		ArrayList<Line> collisionLines = new ArrayList<>();
 		
@@ -229,24 +240,15 @@ public class MapLoader extends JPanel
 				collisionLines.addAll(collisionComponent.getOutline());
 		}
 		
-		// Raycasting
-		g.setColor(Color.GREEN);
+		renderer.setColor(Color.GREEN);
 		{
 			ArrayList<Line> segments = player.getRayCaster().getIntersections(collisionLines);
 			
 			for(Line segment : segments)
-			{
-				int startX = (int) segment.getPointA().x;
-				int startY = (int) segment.getPointA().y;
-				
-				int finishX = (int) segment.getPointB().x;
-				int finishY = (int) segment.getPointB().y;
-				
-				g.drawLine(startX, startY, finishX, finishY);
-			}
+				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
 		}
 		
-		g.setColor(Color.RED);
+		renderer.setColor(Color.RED);
 		{
 			for(Enemy enemy : enemies)
 			{
@@ -254,68 +256,99 @@ public class MapLoader extends JPanel
 				
 				for(Line segment : segments)
 				{
-					int startX = (int) segment.getPointA().x;
-					int startY = (int) segment.getPointA().y;
-					
-					int finishX = (int) segment.getPointB().x;
-					int finishY = (int) segment.getPointB().y;
-					
 					if(this.player.getCollisionComponent().contains(segment.getPointB()))
 						enemy.setTarget(new Vector2(this.player.getPosition()));
 					
-					g.drawLine(startX, startY, finishX, finishY);
+					this.renderLine(renderer, segment.getPointA(), segment.getPointB());
 				}
 			}
 		}
 		
+		/* actualizar */
+		
 		for(Enemy enemy : enemies)
 			enemy.update(0.016);
 		
-		// Debugging
+		/* debugging */
+		
 		for(GameNode node : nodes)
 		{
-			Vector2 position = node.getPosition();
-			
 			CollisionComponent collisionComponent = node.getCollisionComponent();
 			
 			if(collisionComponent == null)
 				continue;
 			
-			double sizeX = collisionComponent.getDims().x;
-			double sizeY = collisionComponent.getDims().y;
-			
-			g.setColor(Color.CYAN);
-			g.drawRect((int) (position.x - (sizeX / 2)), (int) (position.y - (sizeY / 2)), (int) sizeX, (int) sizeY);
+			renderer.setColor(Color.CYAN);
+			this.renderBox(renderer, node.getPosition(), collisionComponent.getDims());
 		}
 		
 		for(Enemy enemy : enemies)
 		{
-			if(enemy.movementZone instanceof BoxMovementZone)
+			MovementZone movementZone = enemy.getMovementZone();
+			
+			if(movementZone instanceof BoxMovementZone)
 			{
-				BoxMovementZone zone = (BoxMovementZone) enemy.movementZone;
+				BoxMovementZone zone = (BoxMovementZone) movementZone;
 				
-				Vector2 center = zone.center;
-				
-				double sizeX = zone.sizeX;
-				double sizeY = zone.sizeY;
-				
-				g.setColor(Color.GREEN);
-				g.drawRect((int) (center.x - (sizeX / 2)), (int) (center.y - (sizeY / 2)), (int) sizeX, (int) sizeY);
+				renderer.setColor(Color.GREEN);
+				this.renderBox(renderer, zone.position, zone.dims);
 			}
 			
-			if(enemy.movementZone instanceof LineMovementZone)
+			if(movementZone instanceof LineMovementZone)
 			{
-				LineMovementZone zone = (LineMovementZone) enemy.movementZone;
+				LineMovementZone zone = (LineMovementZone) movementZone;
 				
-				int startX = (int) zone.pointA.x;
-				int startY = (int) zone.pointA.y;
-				
-				int finishX = (int) zone.pointB.x;
-				int finishY = (int) zone.pointB.y;
-				
-				g.setColor(Color.GREEN);
-				g.drawLine(startX, startY, finishX, finishY);
+				renderer.setColor(Color.GREEN);
+				this.renderLine(renderer, zone.pointA, zone.pointB);
 			}
 		}
+	}
+	
+	private void render(Graphics renderer, GraphicsComponent graphicsComponent)
+	{
+		Vector2 position = this.center(graphicsComponent.getOwner().getPosition());
+		
+		double sizeX = graphicsComponent.getDims().x;
+		double sizeY = graphicsComponent.getDims().y;
+		
+		int posX = (int) (position.x - (sizeX / 2));
+		int posY = (int) (position.y - (sizeY / 2));
+		
+		renderer.drawImage(graphicsComponent.getTexture().getImage(), posX, posY, (int) sizeX, (int) sizeY, null);
+	}
+	
+	private void renderBox(Graphics renderer, Vector2 position, Vector2 size)
+	{
+		Vector2 newPosition = this.center(position);
+		
+		double sizeX = size.x;
+		double sizeY = size.y;
+		
+		int posX = (int) (newPosition.x - (sizeX / 2));
+		int posY = (int) (newPosition.y - (sizeY / 2));
+		
+		renderer.drawRect(posX, posY, (int) sizeX, (int) sizeY);
+	}
+	
+	private void renderLine(Graphics renderer, Vector2 pointA, Vector2 pointB)
+	{
+		Vector2 newPointA = this.center(pointA);
+		Vector2 newPointB = this.center(pointB);
+		
+		renderer.drawLine((int) newPointA.x, (int) newPointA.y, (int) newPointB.x, (int) newPointB.y);
+	}
+	
+	private Vector2 center(Vector2 position)
+	{
+		Vector2 newPosition = new Vector2(position);
+		{
+			newPosition.x -= this.player.getPosition().x;
+			newPosition.y -= this.player.getPosition().y;
+			
+			newPosition.x += this.windowSizeX / 2;
+			newPosition.y += this.windowSizeY / 2;
+		}
+		
+		return newPosition;
 	}
 }
