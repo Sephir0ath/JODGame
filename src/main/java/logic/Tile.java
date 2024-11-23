@@ -1,8 +1,8 @@
 package logic;
 
-public class Wall extends GameNode
+public class Tile extends GameNode
 {
-	public Wall(Vector2 position)
+	public Tile(Vector2 position)
 	{
 		super(position);
 	}

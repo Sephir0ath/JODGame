@@ -48,7 +48,7 @@ public class PrincipalPanel extends JPanel {
 
         // -------- Levels ------------
         for (int i = 0; i < 7; i++) {
-            premadeMaps.add(new MapLoader(player, "src/main/resources/map" + i + ".txt"));
+            premadeMaps.add(new MapLoader(player, "src/main/resources/map-" + i + ".txt"));
             add(premadeMaps.get(i), "map" + i);
         }
 

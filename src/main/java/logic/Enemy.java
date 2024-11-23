@@ -41,11 +41,6 @@ public class Enemy extends GameNode
 			this.targetDirection = 360 - this.targetDirection;
 	}
 	
-	public void manageCollision()
-	{
-		this.setTarget(this.movementZone.chooseLocation(this.position));
-	}
-	
 	@Override
 	public void update(double time)
 	{
@@ -73,5 +68,25 @@ public class Enemy extends GameNode
 		
 		if(Vector2.subtract(this.target, position).getSize() < 5)
 			this.setTarget(this.movementZone.chooseLocation(this.position));
+	}
+	
+	@Override
+	public void manageCollision(GameNode node)
+	{
+		if(node instanceof Player)
+		{
+			// El jugador pierde
+		}
+		
+		else
+		{
+			double aux = this.velocity;
+			
+			this.velocity = -aux;
+			this.update(0.016);
+			this.velocity = +aux;
+			
+			this.setTarget(this.movementZone.chooseLocation(this.position));
+		}
 	}
 }

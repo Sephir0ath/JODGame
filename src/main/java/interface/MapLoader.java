@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MapLoader extends JPanel
 {
@@ -24,9 +23,10 @@ public class MapLoader extends JPanel
 	
 	private Vector2 spawn;
 	
-	private final ImageIcon wallTexture = new ImageIcon(Objects.requireNonNull(this.getClass().getClassLoader().getResource("wall.png")));
-	private final ImageIcon enemyTexture = new ImageIcon(Objects.requireNonNull(this.getClass().getClassLoader().getResource("enemy.png")));
-	private final ImageIcon playerTexture = new ImageIcon(Objects.requireNonNull(this.getClass().getClassLoader().getResource("player.png")));
+	private final ImageIcon textureTile = new ImageIcon(this.getClass().getClassLoader().getResource("tile.png"));
+	private final ImageIcon textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png"));
+	private final ImageIcon textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png"));
+	private final ImageIcon texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png"));
 	
 	public MapLoader(Player player, String file)
 	{
@@ -60,31 +60,21 @@ public class MapLoader extends JPanel
 		this.tileW = Window.getInstance().getWidth() / colCount;
 		this.tileH = Window.getInstance().getHeight() / rowCount;
 		
-		this.player = player;
-		{
-			GraphicsComponent graphicsComponent = new GraphicsComponent(this.player, playerTexture);
-			CollisionComponent collisionComponent = new CollisionComponent(this.player, new Vector2(25, 25));
-			
-			this.player.setGraphicsComponent(graphicsComponent);
-			this.player.setCollisionComponent(collisionComponent);
-		}
-		
-		nodes.add(this.player);
-		
 		try(BufferedReader reader = new BufferedReader(new FileReader(file)))
 		{
-			int r = 0;
-			int c = 0;
-			
-			String line;
-			
-			while((line = reader.readLine()) != null)
+			for(int r = 0; r < rowCount; r++)
 			{
-				for(c = 0; c < colCount; c++)
+				String line = reader.readLine();
+				
+				for(int c = 0; c < colCount; c++)
 				{
-					Vector2 position = new Vector2((double) ((c * this.tileW) + (this.tileW / 2)), (double) ((r * this.tileH) + (this.tileH / 2)));
+					Vector2 position = new Vector2();
+					{
+						position.x = (double) ((c * this.tileW) + (this.tileW / 2));
+						position.y = (double) ((r * this.tileH) + (this.tileH / 2));
+					}
 					
-					GameNode newNode = null;
+					GameNode node = null;
 					
 					GraphicsComponent graphicsComponent = null;
 					CollisionComponent collisionComponent = null;
@@ -93,13 +83,17 @@ public class MapLoader extends JPanel
 					{
 						case '0':
 						{
+							node = new Tile(position);
+							
+							graphicsComponent = new GraphicsComponent(node, textureTile);
 						} break;
 						
 						case '1':
 						{
-							newNode = new Wall(position);
+							node = new Wall(position);
 							
-							collisionComponent = new CollisionComponent(newNode, new Vector2(this.tileW, this.tileH));
+							graphicsComponent = new GraphicsComponent(node, textureWall);
+							collisionComponent = new CollisionComponent(node, new Vector2(this.tileW, this.tileH));
 						} break;
 						
 						case '2':
@@ -134,26 +128,24 @@ public class MapLoader extends JPanel
 								movementZone = new LineMovementZone(pointA, pointB);
 							}
 							
-							newNode = new Enemy(position, movementZone);
+							node = new Enemy(position, movementZone);
 							
-							graphicsComponent = new GraphicsComponent(newNode, enemyTexture);
-							collisionComponent = new CollisionComponent(newNode, new Vector2(25, 25));
+							graphicsComponent = new GraphicsComponent(node, textureEnemy);
+							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
 						} break;
 					}
 					
-					if(newNode == null)
+					if(node == null)
 						continue;
 					
-					newNode.setGraphicsComponent(graphicsComponent);
-					newNode.setCollisionComponent(collisionComponent);
+					node.setGraphicsComponent(graphicsComponent);
+					node.setCollisionComponent(collisionComponent);
 					
-					this.nodes.add(newNode);
+					this.nodes.add(node);
 					
-					if(newNode instanceof Enemy)
-						this.enemies.add((Enemy) newNode);
+					if(node instanceof Enemy)
+						this.enemies.add((Enemy) node);
 				}
-				
-				r += 1;
 			}
 		}
 		
@@ -163,6 +155,17 @@ public class MapLoader extends JPanel
 			
 			throw new RuntimeException(exception);
 		}
+		
+		this.player = player;
+		{
+			GraphicsComponent graphicsComponent = new GraphicsComponent(this.player, texturePlayer);
+			CollisionComponent collisionComponent = new CollisionComponent(this.player, new Vector2(25, 25));
+			
+			this.player.setGraphicsComponent(graphicsComponent);
+			this.player.setCollisionComponent(collisionComponent);
+		}
+		
+		nodes.add(this.player);
 		
 		player.setPosition(spawn);
 	}
@@ -175,14 +178,6 @@ public class MapLoader extends JPanel
 		for(GameNode node : nodes)
 		{
 			Vector2 position = node.getPosition();
-			
-			if(node instanceof Wall)
-			{
-				g.setColor(Color.CYAN);
-				g.fillRect((int) (position.x - (this.tileW / 2)), (int) (position.y - (this.tileH / 2)), (int) this.tileW, (int) this.tileH);
-				
-				continue;
-			}
 			
 			GraphicsComponent graphicsComponent = node.getGraphicsComponent();
 			
@@ -211,16 +206,8 @@ public class MapLoader extends JPanel
 				
 				if(CollisionComponent.areColliding(collisionComponentA, collisionComponentB))
 				{
-					if(nodeA != this.player)
-						continue;
-					
-					{
-						double aux = this.player.getVelocity();
-						
-						this.player.setVelocity(-aux);
-						this.player.update(0.016);
-						this.player.setVelocity(aux);
-					}
+					nodeA.manageCollision(nodeB);
+					nodeB.manageCollision(nodeA);
 					
 					Vector2 positionA = nodeA.getPosition();
 					Vector2 positionB = nodeB.getPosition();

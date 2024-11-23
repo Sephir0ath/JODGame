@@ -25,4 +25,5 @@ public abstract class GameNode
 	public void setCollisionComponent(CollisionComponent collisionComponent) { this.collisionComponent = collisionComponent; }
 	
 	public abstract void update(double time);
+	public abstract void manageCollision(GameNode node);
 }

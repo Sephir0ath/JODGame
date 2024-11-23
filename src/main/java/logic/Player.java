@@ -50,4 +50,14 @@ public class Player extends GameNode
 		
 		this.rayCaster.setRaysSource(position);
 	}
+	
+	@Override
+	public void manageCollision(GameNode node)
+	{
+		double aux = this.velocity;
+		
+		this.velocity = -aux;
+		this.update(0.016);
+		this.velocity = +aux;
+	}
 }
