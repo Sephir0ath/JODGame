@@ -1,12 +1,13 @@
-package Interface;
+package main.java.interfaces;
 
-import Interface.menu.CreditsJPanel;
-import Interface.menu.MainMenuJPanel;
-import Interface.menu.PlayLevelsJPanel;
-import Interface.menu.SettingsJPanel;
+import main.java.interfaces.menu.CreditsJPanel;
+import main.java.interfaces.menu.MainMenuJPanel;
+import main.java.interfaces.menu.PlayLevelsJPanel;
+import main.java.interfaces.menu.SettingsJPanel;
 
-import logic.*;
+import main.java.logic.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -26,6 +27,7 @@ public class PrincipalPanel extends JPanel {
     private JPanel actualPanel;
     private MapLoader mapLoader;
     private Font pixelFont;
+    private Image backgroundImage;
 
     public PrincipalPanel() {
         super();
@@ -38,6 +40,7 @@ public class PrincipalPanel extends JPanel {
 
         try {
             pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/pixel_font.ttf")).deriveFont(18f);
+            backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
         } catch (Exception e) {
             pixelFont = new Font("Monospaced", Font.BOLD, 18); // Fallback
         }

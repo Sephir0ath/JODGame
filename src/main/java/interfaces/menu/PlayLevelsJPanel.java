@@ -1,6 +1,6 @@
-package Interface.menu;
+package main.java.interfaces.menu;
 
-import Interface.PrincipalPanel;
+import main.java.interfaces.PrincipalPanel;
 import javax.swing.*;
 import java.awt.*;
 

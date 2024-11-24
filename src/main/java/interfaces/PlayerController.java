@@ -1,6 +1,6 @@
-package Interface;
+package main.java.interfaces;
 
-import logic.Player;
+import main.java.logic.Player;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
