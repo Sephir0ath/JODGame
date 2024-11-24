@@ -41,7 +41,7 @@ public class PrincipalPanel extends JPanel
 		
 		try
 		{
-			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/pixel_font.ttf")).deriveFont(18f);
+			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/font.ttf")).deriveFont(18f);
 		}
 		
 		catch(Exception e)

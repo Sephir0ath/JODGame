@@ -214,6 +214,8 @@ public class MapLoader extends JPanel
 	@Override
 	protected void paintComponent(Graphics renderer)
 	{
+		super.paintComponent(renderer);
+		
 		{
 			if(this.downKeys.contains(KeyEvent.VK_A))
 				this.player.addToDirection(-1);
@@ -234,9 +236,10 @@ public class MapLoader extends JPanel
 				this.player.setVelocity(0);
 		}
 		
-		super.paintComponent(renderer);
-		
 		renderer.drawImage(textureBackground, 0, 0, null);
+		
+		for(GameNode node : nodes)
+			node.update(UPDATE_TIME);
 		
 		for(CollisionComponent componentA : collisionComponents)
 		{
@@ -272,9 +275,6 @@ public class MapLoader extends JPanel
 		{
 			this.render(renderer, component);
 		}
-		
-		for(GameNode node : nodes)
-			node.update(UPDATE_TIME);
 		
 		/* DEBUGGING */
 		

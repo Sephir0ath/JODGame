@@ -29,8 +29,8 @@ public class MainMenuJPanel extends JPanel {
 
         try {
             backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
-            playerImage = ImageIO.read(new File("src/main/resources/player-menu.png"));
-            enemyImage = ImageIO.read(new File("src/main/resources/enemy-menu.png"));
+            playerImage = ImageIO.read(new File("src/main/resources/player.png"));
+            enemyImage = ImageIO.read(new File("src/main/resources/enemy.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }

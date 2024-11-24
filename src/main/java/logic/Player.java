@@ -28,8 +28,8 @@ public class Player extends GameNode
 	@Override
 	public void update(double time)
 	{
-		this.position.x = this.position.x + (velocity * time) * Math.cos(Math.toRadians(direction));
-		this.position.y = this.position.y + (velocity * time) * Math.sin(Math.toRadians(direction));
+		this.position.x += (velocity * time) * Math.cos(Math.toRadians(this.direction));
+		this.position.y += (velocity * time) * Math.sin(Math.toRadians(this.direction));
 	}
 	
 	@Override

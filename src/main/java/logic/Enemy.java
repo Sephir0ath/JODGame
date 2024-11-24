@@ -51,8 +51,8 @@ public class Enemy extends GameNode
 		
 		else
 		{
-			this.position.x = this.position.x + ((velocity * time) * Math.cos(Math.toRadians(direction)));
-			this.position.y = this.position.y + ((velocity * time) * Math.sin(Math.toRadians(direction)));
+			this.position.x += (velocity * time) * Math.cos(Math.toRadians(this.direction));
+			this.position.y += (velocity * time) * Math.sin(Math.toRadians(this.direction));
 		}
 		
 		if(Vector2.subtract(this.target, position).getSize() < 5)
