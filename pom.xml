@@ -7,7 +7,7 @@
 	
 	<build>
 		<directory> ./exec </directory>
-		
+
 		<sourceDirectory> ./src </sourceDirectory>
 		<outputDirectory> ./exec/classes </outputDirectory>
 		

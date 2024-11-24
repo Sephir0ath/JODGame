@@ -1,4 +1,4 @@
-package logic;
+package main.java.logic;
 
 public class Enemy extends GameNode
 {
@@ -45,7 +45,9 @@ public class Enemy extends GameNode
 		if(directionVector.y < 0)
 			this.targetDirection = 360 - this.targetDirection;
 	}
-	
+
+	public double getDirection() { return this.direction; }
+
 	@Override
 	public void update(double time)
 	{

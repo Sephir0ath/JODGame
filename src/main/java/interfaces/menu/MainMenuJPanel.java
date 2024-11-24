@@ -1,7 +1,7 @@
-package Interface.menu;
+package main.java.interfaces.menu;
 
-import Interface.PrincipalPanel;
-import Interface.Window;
+import main.java.interfaces.Window;
+import main.java.interfaces.PrincipalPanel;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -29,8 +29,8 @@ public class MainMenuJPanel extends JPanel {
 
         try {
             backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
-            playerImage = ImageIO.read(new File("src/main/resources/player.png"));
-            enemyImage = ImageIO.read(new File("src/main/resources/enemy.png"));
+            playerImage = ImageIO.read(new File("src/main/resources/player_menu.png"));
+            enemyImage = ImageIO.read(new File("src/main/resources/enemy_menu.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }

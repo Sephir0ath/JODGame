@@ -1,11 +1,13 @@
-package Interface;
+package main.java.interfaces;
 
-import logic.*;
+import main.java.logic.*;
 
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -26,18 +28,26 @@ public class MapLoader extends JPanel
 	
 	private Vector2 spawn;
 	
-	private final ImageIcon textureTile = new ImageIcon(this.getClass().getClassLoader().getResource("tile.png"));
-	private final ImageIcon textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png"));
-	private final ImageIcon textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png"));
-	private final ImageIcon texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png"));
-	
+	private final RotatedIcon textureTile = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("tile.png")), 0, true);
+	private final RotatedIcon textureWall = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")), 0, true);
+	private final RotatedIcon textureEnemy = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("enemyOriginal.png")), 0, true);
+	private final RotatedIcon texturePlayer = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("playerOriginal.png")), 0, true);
+
+	private Image backgroundImage;
+
 	public MapLoader(Player player, String file)
 	{
-		this.setBackground(Color.BLACK);
+
+		try {
+			backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
+		} catch(IOException e) {
+			e.printStackTrace();
+			this.setBackground(Color.BLACK);
+		}
 		
 		this.nodes = new ArrayList<>();
 		this.enemies = new ArrayList<>();
-		
+
 		int rowCount = 0;
 		int colCount = 0;
 		{
@@ -192,6 +202,11 @@ public class MapLoader extends JPanel
 	@Override
 	protected void paintComponent(Graphics renderer) {
 		super.paintComponent(renderer);
+
+		/* background */
+		if(backgroundImage != null) {
+			renderer.drawImage(backgroundImage, 0, 0, null);
+		}
 		
 		/* colisiones */
 		
@@ -224,9 +239,24 @@ public class MapLoader extends JPanel
 			
 			if(graphicsComponent == null)
 				continue;
-			
-			this.render(renderer, graphicsComponent);
+
+			if(node instanceof Player)
+			{
+				double angle = player.getDirection();
+				graphicsComponent.rotateSprite(angle);
+				this.renderRotated(renderer, graphicsComponent);
+			} else if(node instanceof Enemy enemy) {
+
+                double angle = enemy.getDirection();
+				graphicsComponent.rotateSprite(angle);
+				this.renderRotated(renderer, graphicsComponent);
+
+			} else {
+				this.render(renderer, graphicsComponent);
+			}
+
 		}
+
 		
 		/* raycasting */
 		
@@ -242,10 +272,10 @@ public class MapLoader extends JPanel
 		
 		renderer.setColor(Color.GREEN);
 		{
-			ArrayList<Line> segments = player.getRayCaster().getIntersections(collisionLines);
-			
-			for(Line segment : segments)
-				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
+//			ArrayList<Line> segments = player.getRayCaster().getIntersections(collisionLines);
+//
+//			for(Line segment : segments)
+//				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
 		}
 		
 		renderer.setColor(Color.RED);
@@ -313,8 +343,23 @@ public class MapLoader extends JPanel
 		
 		int posX = (int) (position.x - (sizeX / 2));
 		int posY = (int) (position.y - (sizeY / 2));
-		
-		renderer.drawImage(graphicsComponent.getTexture().getImage(), posX, posY, (int) sizeX, (int) sizeY, null);
+
+		renderer.drawImage(graphicsComponent.getTexture(), posX, posY, (int) sizeX, (int) sizeY, null);
+	}
+
+	private void renderRotated(Graphics renderer, GraphicsComponent graphicsComponent)
+	{
+		Vector2 position = this.center(graphicsComponent.getOwner().getPosition());
+		double sizeX = graphicsComponent.getDims().x;
+		double sizeY = graphicsComponent.getDims().y;
+
+		int posX = (int) (position.x - (sizeX / 2));
+		int posY = (int) (position.y - (sizeY / 2));
+
+		RotatedIcon rotatedIcon = graphicsComponent.getRotatedIcon();
+		rotatedIcon.paintIcon(null, renderer, posX, posY);
+
+
 	}
 	
 	private void renderBox(Graphics renderer, Vector2 position, Vector2 size)

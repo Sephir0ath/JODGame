@@ -1,23 +1,22 @@
-package Interface.menu;
+package main.java.interfaces.menu;
 
-import Interface.PrincipalPanel;
-import Interface.Window;
+import main.java.interfaces.PrincipalPanel;
+import main.java.interfaces.Window;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class CreditsJPanel extends JPanel {
+public class SettingsJPanel extends JPanel {
     private Font pixelFont;
     private Image backgroundImage;
-    public CreditsJPanel(Font pixelFont) {
+    public SettingsJPanel(Font pixelFont) {
         this.setLayout(null);
         this.pixelFont = pixelFont;
-
 
         try {
             backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
@@ -25,33 +24,27 @@ public class CreditsJPanel extends JPanel {
             e.printStackTrace();
         }
 
-        String[] CreditsStrings = {
-                "Authors:",
-                "Juan Felipe Raysz Muñoz (Sephir)",
-                "Oliver Isaías Peñailillo Sanzana (Pyrrss)",
-                "Diego Emilio Rebollo García (Diego52_H)"
-        };
+        JButton backButton = createButton("Back", pixelFont);
+        JButton creditsButton = createButton("Credits", pixelFont);
 
-        JButton backButton = createButton("Back", this.pixelFont);
-
-
-        for (int i = 0; i < CreditsStrings.length; i++) {
-            JLabel label = new JLabel(CreditsStrings[i]);
-            label.setBounds(Window.getInstance().getWidth()/2-300, Window.getInstance().getHeight()/2+(i*30), 600, 20);
-            label.setFont(pixelFont.deriveFont(14f));
-            label.setForeground(Color.WHITE);
-            this.add(label);
-        }
+        creditsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                PrincipalPanel.getInstance().showPanel("Credits");
+            }
+        });
 
         backButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PrincipalPanel.getInstance().showPanel("Settings");
+                PrincipalPanel.getInstance().showPanel("MainMenu");
             }
         });
 
 
         backButton.setBounds(650, 720, 100, 50);
         this.add(backButton);
+
+        creditsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
+        this.add(creditsButton);
     }
 
     private JButton createButton(String text, Font pixelFont) {

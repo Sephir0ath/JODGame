@@ -1,4 +1,4 @@
-package logic;
+package main.java.logic;
 
 public class Player extends GameNode
 {
@@ -11,7 +11,7 @@ public class Player extends GameNode
 	{
 		super(position);
 		
-		this.rayCaster = new RayCaster(this.position);
+		//this.rayCaster = new RayCaster(this.position);
 	}
 	
 	public double getVelocity()
@@ -24,17 +24,17 @@ public class Player extends GameNode
 		return this.direction;
 	}
 	
-	public RayCaster getRayCaster()
-	{
-		return this.rayCaster;
-	}
+//	public RayCaster getRayCaster()
+//	{
+//		return this.rayCaster;
+//	}
 	
 	public void addToDirection(double degrees)
 	{
 		this.direction += degrees;
 		this.direction %= 360;
 		
-		this.rayCaster.setRaysDirection(direction);
+		//this.rayCaster.setRaysDirection(direction);
 	}
 	
 	public void setVelocity(double velocity)
@@ -48,7 +48,7 @@ public class Player extends GameNode
 		this.position.x = this.position.x + (velocity * time) * Math.cos(Math.toRadians(direction));
 		this.position.y = this.position.y + (velocity * time) * Math.sin(Math.toRadians(direction));
 		
-		this.rayCaster.setRaysSource(position);
+		//this.rayCaster.setRaysSource(position);
 	}
 	
 	@Override
