@@ -3,23 +3,40 @@ package Interface.menu;
 import Interface.PrincipalPanel;
 import Interface.Window;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class MainMenuJPanel extends JPanel {
     JButton playLevelsButton;
     JButton exitButton;
     JButton settingsButton;
     JButton levelMakerButton;
+    private Font pixelFont;
+    private Image backgroundImage;
+    private Image playerImage;
+    private Image enemyImage;
 
-    public MainMenuJPanel() {
+
+    public MainMenuJPanel(Font pixelFont) {
         setLayout(null);
         this.setBackground(Color.MAGENTA);
+        this.pixelFont = pixelFont;
 
-        playLevelsButton = new JButton("Play Levels");
-        playLevelsButton.setBounds(Window.getInstance().getWidth()/2-50, Window.getInstance().getHeight()/6, 100, 30);
+        try {
+            backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
+            playerImage = ImageIO.read(new File("src/main/resources/player.png"));
+            enemyImage = ImageIO.read(new File("src/main/resources/enemy.png"));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        playLevelsButton = createButton("Play Levels", this.pixelFont);
+        playLevelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/6, 400, 50);
         playLevelsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -29,8 +46,8 @@ public class MainMenuJPanel extends JPanel {
 
         add(playLevelsButton);
 
-        exitButton = new JButton("Exit");
-        exitButton.setBounds(650, 720, 100, 30);
+        exitButton = createButton("Exit", this.pixelFont);
+        exitButton.setBounds(650, 720, 100, 50);
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,8 +57,8 @@ public class MainMenuJPanel extends JPanel {
 
         add(exitButton);
 
-        settingsButton = new JButton("Settings");
-        settingsButton.setBounds(Window.getInstance().getWidth()/2-50, Window.getInstance().getHeight()/3, 100, 30);
+        settingsButton = createButton("Settings", this.pixelFont);
+        settingsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/3, 400, 50);
         settingsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -50,11 +67,40 @@ public class MainMenuJPanel extends JPanel {
         });
         add(settingsButton);
 
-        levelMakerButton = new JButton("Level Maker");
-        levelMakerButton.setBounds(Window.getInstance().getWidth()/2-50, Window.getInstance().getHeight()/4, 100, 30);
+        levelMakerButton = createButton("Level Maker", this.pixelFont);
+        levelMakerButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
         add(levelMakerButton);
 
 
 
+    }
+
+    private JButton createButton(String text, Font pixelFont) {
+
+        JButton button = new JButton(text);
+        button.setFont(pixelFont);
+        button.setForeground(Color.WHITE);
+        button.setBackground(Color.BLACK);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 7));
+        return button;
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        if(backgroundImage != null) {
+            g.drawImage(backgroundImage, 0, 0, null);
+        }
+
+        if(playerImage != null) {
+            g.drawImage(playerImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4 + 200, 200, 200, null);
+        }
+
+        if(enemyImage != null) {
+            g.drawImage(enemyImage, Window.getInstance().getWidth()/2, Window.getInstance().getHeight()/4 + 200, 200, 200,null);
+        }
     }
 }
