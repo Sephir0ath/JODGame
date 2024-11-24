@@ -9,8 +9,6 @@ public class Enemy extends GameNode
 	private Vector2 target;
 	private MovementZone movementZone;
 	
-	private RayCaster rayCaster;
-	
 	public Enemy(Vector2 position, MovementZone movementZone)
 	{
 		super(position);
@@ -20,19 +18,12 @@ public class Enemy extends GameNode
 		
 		this.movementZone = movementZone;
 		
-		this.rayCaster = new RayCaster(position);
-		
 		this.setTarget(this.movementZone.chooseLocation(this.position));
 	}
 	
 	public MovementZone getMovementZone()
 	{
 		return this.movementZone;
-	}
-	
-	public RayCaster getRayCaster()
-	{
-		return this.rayCaster;
 	}
 	
 	public void setTarget(Vector2 target)
@@ -54,21 +45,17 @@ public class Enemy extends GameNode
 			double sign = (this.targetDirection - this.direction) / Math.abs(this.targetDirection - this.direction);
 			
 			this.direction += sign * 0.5;
-			this.rayCaster.setRaysDirection(this.direction);
 			
 			if(Math.abs(this.targetDirection - this.direction) < 0.5)
-			{
 				this.direction = this.targetDirection;
-				this.rayCaster.setRaysDirection(this.direction);
-			}
+			
+			this.getRaycastComponent().setRaysDirection(this.direction);
 		}
 		
 		else
 		{
 			this.position.x = this.position.x + ((velocity * time) * Math.cos(Math.toRadians(direction)));
 			this.position.y = this.position.y + ((velocity * time) * Math.sin(Math.toRadians(direction)));
-			
-			this.rayCaster.setRaysSource(position);
 		}
 		
 		if(Vector2.subtract(this.target, position).getSize() < 5)
@@ -78,20 +65,19 @@ public class Enemy extends GameNode
 	@Override
 	public void manageCollision(GameNode node)
 	{
-		if(node instanceof Player)
-		{
-			// El jugador pierde
-		}
+		double aux = this.velocity;
 		
-		else
-		{
-			double aux = this.velocity;
-			
-			this.velocity = -aux;
-			this.update(0.016);
-			this.velocity = +aux;
-			
-			this.setTarget(this.movementZone.chooseLocation(this.position));
-		}
+		this.velocity = -aux;
+		this.update(0.016);
+		this.velocity = +aux;
+		
+		this.setTarget(this.movementZone.chooseLocation(this.position));
+	}
+	
+	@Override
+	public void manageIntersection(GameNode node)
+	{
+		if(node instanceof Player)
+			this.setTarget(new Vector2(node.getPosition()));
 	}
 }

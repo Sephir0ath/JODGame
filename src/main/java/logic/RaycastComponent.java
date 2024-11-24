@@ -2,14 +2,16 @@ package logic;
 
 import java.util.ArrayList;
 
-public class RayCaster
+public class RaycastComponent extends Component
 {
-	private final int MAX_DISTANCE = 200;
+	private final double MAX_DISTANCE = 200;
 	
 	private ArrayList<Ray> rays;
 	
-	public RayCaster(Vector2 source)
+	public RaycastComponent(GameNode owner, Vector2 source)
 	{
+		super(owner);
+		
 		this.rays = new ArrayList<>();
 		
 		for(int i = -22; i < 22; i++)
@@ -26,6 +28,27 @@ public class RayCaster
 	{
 		for (int i = -22; i < 22; i++)
 			this.rays.get(i + 22).setDirection(degrees + i);
+	}
+	
+	public boolean intersects(CollisionComponent collisionComponent)
+	{
+		for(Ray ray : this.rays)
+		{
+			for(Line line : collisionComponent.getOutline())
+			{
+				Vector2 intersection = ray.cast(line);
+				
+				if(intersection != null)
+				{
+					double distance = Vector2.subtract(ray.getSource(), intersection).getSize();;
+					
+					if(distance < MAX_DISTANCE)
+						return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public ArrayList<Line> getIntersections(ArrayList<Line> collisionLines)

@@ -9,34 +9,50 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+
+import java.awt.event.KeyEvent;
 
 public class MapLoader extends JPanel
 {
 	private Player player;
 	
+	private Set<Integer> downKeys;
 	private ArrayList<GameNode> nodes;
-	private ArrayList<Enemy> enemies;
 	
-	private double tileW = 80;
-	private double tileH = 80;
+	private ArrayList<RaycastComponent> raycastComponents;
+	private ArrayList<GraphicsComponent> graphicsComponents;
+	private ArrayList<CollisionComponent> collisionComponents;
+	
+	private final double tileW = 80;
+	private final double tileH = 80;
 	
 	private final double windowSizeX = Window.getInstance().getContentPane().getSize().getWidth();
 	private final double windowSizeY = Window.getInstance().getContentPane().getSize().getHeight();
-	
-	private Vector2 spawn;
 	
 	private final ImageIcon textureTile = new ImageIcon(this.getClass().getClassLoader().getResource("tile.png"));
 	private final ImageIcon textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png"));
 	private final ImageIcon textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png"));
 	private final ImageIcon texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png"));
 	
-	public MapLoader(Player player, String file)
+	private static final double UPDATE_TIME = 0.016;
+	
+	public MapLoader(String file)
 	{
 		this.setBackground(Color.BLACK);
 		
+		this.downKeys = new HashSet<>();
+		
 		this.nodes = new ArrayList<>();
-		this.enemies = new ArrayList<>();
+		
+		this.raycastComponents = new ArrayList<>();
+		this.graphicsComponents = new ArrayList<>();
+		this.collisionComponents = new ArrayList<>();
 		
 		int rowCount = 0;
 		int colCount = 0;
@@ -60,8 +76,7 @@ public class MapLoader extends JPanel
 			}
 		}
 		
-		// this.tileW = Window.getInstance().getContentPane().getSize().getWidth() / colCount;
-		// this.tileH = Window.getInstance().getContentPane().getSize().getHeight() / rowCount;
+		ArrayList<SimpleEntry<GameNode, Integer>> auxNodes = new ArrayList<>();
 		
 		try(BufferedReader reader = new BufferedReader(new FileReader(file)))
 		{
@@ -77,22 +92,25 @@ public class MapLoader extends JPanel
 						position.y = (double) ((r * this.tileH) + (this.tileH / 2));
 					}
 					
+					{
+						GameNode tile = new Tile(new Vector2(position));
+						tile.setGraphicsComponent(new GraphicsComponent(tile, textureTile, new Vector2(this.tileW, this.tileH)));
+						
+						auxNodes.add(new SimpleEntry(tile, 0));
+					}
+					
+					Integer type = 0;
 					GameNode node = null;
 					
+					RaycastComponent raycastComponent = null;
 					GraphicsComponent graphicsComponent = null;
 					CollisionComponent collisionComponent = null;
 					
 					switch(line.charAt(c))
 					{
-						case '0':
-						{
-							node = new Tile(position);
-							
-							graphicsComponent = new GraphicsComponent(node, textureTile, new Vector2(this.tileW, this.tileH));
-						} break;
-						
 						case '1':
 						{
+							type = 1;
 							node = new Wall(position);
 							
 							graphicsComponent = new GraphicsComponent(node, textureWall, new Vector2(this.tileW, this.tileH));
@@ -101,25 +119,21 @@ public class MapLoader extends JPanel
 						
 						case '2':
 						{
-							this.spawn = position;
+							if(this.player != null)
+								continue;
 							
-							node = new Tile(new Vector2(position));
+							type = 3;
+							node = new Player(position);
 							
-							graphicsComponent = new GraphicsComponent(node, textureTile, new Vector2(this.tileW, this.tileH));
+							raycastComponent = new RaycastComponent(node, position);
+							graphicsComponent = new GraphicsComponent(node, texturePlayer, new Vector2(25, 25));
+							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
+							
+							this.player = (Player) node;
 						} break;
 						
 						case '3':
 						{
-							{
-								GameNode auxNode = new Tile(new Vector2(position));
-								
-								graphicsComponent = new GraphicsComponent(auxNode, textureTile, new Vector2(this.tileW, this.tileH));
-								
-								auxNode.setGraphicsComponent(graphicsComponent);
-								
-								this.nodes.add(auxNode);
-							}
-							
 							MovementZone movementZone = null;
 							
 							if(Math.random() < 0.5)
@@ -145,8 +159,10 @@ public class MapLoader extends JPanel
 								movementZone = new LineMovementZone(pointA, pointB);
 							}
 							
+							type = 2;
 							node = new Enemy(position, movementZone);
 							
+							raycastComponent = new RaycastComponent(node, position);
 							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(25, 25));
 							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
 						} break;
@@ -155,13 +171,11 @@ public class MapLoader extends JPanel
 					if(node == null)
 						continue;
 					
+					node.setRaycastComponent(raycastComponent);
 					node.setGraphicsComponent(graphicsComponent);
 					node.setCollisionComponent(collisionComponent);
 					
-					this.nodes.add(node);
-					
-					if(node instanceof Enemy)
-						this.enemies.add((Enemy) node);
+					auxNodes.add(new SimpleEntry<>(node, type));
 				}
 			}
 		}
@@ -173,103 +187,113 @@ public class MapLoader extends JPanel
 			throw new RuntimeException(exception);
 		}
 		
-		this.player = player;
+		Collections.sort(auxNodes, Comparator.comparing(pair -> pair.getValue()));
+		
+		for(SimpleEntry entry : auxNodes)
 		{
-			GraphicsComponent graphicsComponent = new GraphicsComponent(this.player, texturePlayer, new Vector2(25, 25));
-			CollisionComponent collisionComponent = new CollisionComponent(this.player, new Vector2(25, 25));
+			GameNode node = (GameNode) entry.getKey();
 			
-			this.player.setGraphicsComponent(graphicsComponent);
-			this.player.setCollisionComponent(collisionComponent);
+			RaycastComponent raycastComponent = node.getRaycastComponent();
+			GraphicsComponent graphicsComponent = node.getGraphicsComponent();
+			CollisionComponent collisionComponent = node.getCollisionComponent();
+			
+			this.nodes.add(node);
+			
+			if(raycastComponent != null)
+				this.raycastComponents.add(raycastComponent);
+			
+			if(graphicsComponent != null)
+				this.graphicsComponents.add(graphicsComponent);
+			
+			if(collisionComponent != null)
+				this.collisionComponents.add(collisionComponent);
 		}
-		
-		nodes.add(this.player);
-		
-		this.player.setPosition(spawn);
-		
-		System.out.println(spawn.x + " " + spawn.y);
 	}
 	
 	@Override
-	protected void paintComponent(Graphics renderer) {
+	protected void paintComponent(Graphics renderer)
+	{
+		if(this.downKeys.contains(KeyEvent.VK_A))
+			this.player.addToDirection(-1);
+		
+		if(this.downKeys.contains(KeyEvent.VK_D))
+			this.player.addToDirection(+1);
+		
+		if(this.downKeys.contains(KeyEvent.VK_W) || downKeys.contains(KeyEvent.VK_S))
+		{
+			if(this.downKeys.contains(KeyEvent.VK_W))
+				this.player.setVelocity(+100);
+			
+			if(this.downKeys.contains(KeyEvent.VK_S))
+				this.player.setVelocity(-100);
+		}
+		
+		else
+			this.player.setVelocity(0);
+		
 		super.paintComponent(renderer);
 		
-		/* colisiones */
-		
-		for(GameNode nodeA : nodes)
+		for(CollisionComponent componentA : collisionComponents)
 		{
-			for(GameNode nodeB : nodes)
+			for(CollisionComponent componentB : collisionComponents)
 			{
-				if(nodeA == nodeB)
+				if(componentA == componentB)
 					continue;
 				
-				CollisionComponent collisionComponentA = nodeA.getCollisionComponent();
-				CollisionComponent collisionComponentB = nodeB.getCollisionComponent();
-				
-				if((collisionComponentA == null) || (collisionComponentB == null))
-					continue;
-				
-				if(CollisionComponent.areColliding(collisionComponentA, collisionComponentB))
+				if(CollisionComponent.areColliding(componentA, componentB))
 				{
+					GameNode nodeA = componentA.getOwner();
+					GameNode nodeB = componentB.getOwner();
+					
 					nodeA.manageCollision(nodeB);
 					nodeB.manageCollision(nodeA);
 				}
 			}
 		}
 		
-		/* renderizar */
-		
-		for(GameNode node : nodes)
+		for(RaycastComponent raycaster : this.raycastComponents)
 		{
-			GraphicsComponent graphicsComponent = node.getGraphicsComponent();
-			
-			if(graphicsComponent == null)
-				continue;
-			
-			this.render(renderer, graphicsComponent);
-		}
-		
-		/* raycasting */
-		
-		ArrayList<Line> collisionLines = new ArrayList<>();
-		
-		for(GameNode node : nodes)
-		{
-			CollisionComponent collisionComponent = node.getCollisionComponent();
-			
-			if((collisionComponent != null) && !(node instanceof Enemy))
-				collisionLines.addAll(collisionComponent.getOutline());
-		}
-		
-		renderer.setColor(Color.GREEN);
-		{
-			ArrayList<Line> segments = player.getRayCaster().getIntersections(collisionLines);
-			
-			for(Line segment : segments)
-				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
-		}
-		
-		renderer.setColor(Color.RED);
-		{
-			for(Enemy enemy : enemies)
+			for(CollisionComponent component : this.collisionComponents)
 			{
-				ArrayList<Line> segments = enemy.getRayCaster().getIntersections(collisionLines);
+				GameNode nodeA = raycaster.getOwner();
+				GameNode nodeB = component.getOwner();
 				
-				for(Line segment : segments)
-				{
-					if(this.player.getCollisionComponent().contains(segment.getPointB()))
-						enemy.setTarget(new Vector2(this.player.getPosition()));
-					
-					this.renderLine(renderer, segment.getPointA(), segment.getPointB());
-				}
+				if(raycaster.intersects(component))
+					nodeA.manageIntersection(nodeB);
 			}
 		}
 		
-		/* actualizar */
+		for(GraphicsComponent component : this.graphicsComponents)
+		{
+			this.render(renderer, component);
+		}
 		
-		for(Enemy enemy : enemies)
-			enemy.update(0.016);
+		for(GameNode node : nodes)
+			node.update(UPDATE_TIME);
 		
-		/* debugging */
+		/* DEBUGGING */
+		
+		ArrayList<Line> intersectionLines = new ArrayList<>();
+		
+		for(CollisionComponent component : collisionComponents)
+		{
+			if(component.getOwner() instanceof Player)
+				continue;
+			
+			if(component.getOwner() instanceof Enemy)
+				continue;
+			
+			intersectionLines.addAll(component.getOutline());
+		}
+		
+		for(RaycastComponent raycaster : this.raycastComponents)
+		{
+			for(Line segment : raycaster.getIntersections(intersectionLines))
+			{
+				renderer.setColor(Color.RED);
+				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
+			}
+		}
 		
 		for(GameNode node : nodes)
 		{
@@ -282,8 +306,13 @@ public class MapLoader extends JPanel
 			this.renderBox(renderer, node.getPosition(), collisionComponent.getDims());
 		}
 		
-		for(Enemy enemy : enemies)
+		for(GameNode node : nodes)
 		{
+			if(!(node instanceof Enemy))
+				continue;
+			
+			Enemy enemy = (Enemy) node;
+			
 			MovementZone movementZone = enemy.getMovementZone();
 			
 			if(movementZone instanceof BoxMovementZone)
@@ -302,6 +331,11 @@ public class MapLoader extends JPanel
 				this.renderLine(renderer, zone.pointA, zone.pointB);
 			}
 		}
+	}
+	
+	public void setDownKeys(Set<Integer> downKeys)
+	{
+		this.downKeys = downKeys;
 	}
 	
 	private void render(Graphics renderer, GraphicsComponent graphicsComponent)

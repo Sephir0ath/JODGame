@@ -8,8 +8,17 @@ public class Tile extends GameNode
 	}
 	
 	@Override
-	public void update(double time) {}
+	public void update(double time)
+	{
+	}
 	
 	@Override
-	public void manageCollision(GameNode node) {}
+	public void manageCollision(GameNode node)
+	{
+	}
+	
+	@Override
+	public void manageIntersection(GameNode node)
+	{
+	}
 }

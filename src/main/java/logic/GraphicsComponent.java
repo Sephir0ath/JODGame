@@ -2,24 +2,20 @@ package logic;
 
 import javax.swing.ImageIcon;
 
-public class GraphicsComponent
+public class GraphicsComponent extends Component
 {
 	private Vector2 dims;
-	private GameNode owner;
 	
 	private ImageIcon texture;
 	
 	public GraphicsComponent(GameNode owner, ImageIcon texture, Vector2 dims)
 	{
+		super(owner);
+		
 		this.dims = dims;
 		this.owner = owner;
 		
 		this.texture = texture;
-	}
-	
-	public GameNode getOwner()
-	{
-		return this.owner;
 	}
 	
 	public Vector2 getDims()

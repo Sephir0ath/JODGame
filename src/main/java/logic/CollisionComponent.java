@@ -2,38 +2,16 @@ package logic;
 
 import java.util.ArrayList;
 
-public class CollisionComponent
+public class CollisionComponent extends Component
 {
 	private Vector2 dims;
-	private GameNode owner;
 	
 	public CollisionComponent(GameNode owner, Vector2 dims)
 	{
+		super(owner);
+		
 		this.dims = dims;
 		this.owner = owner;
-	}
-	
-	public boolean contains(Vector2 point)
-	{
-		Vector2 position = this.owner.getPosition();
-		
-		boolean intersectionOverX;
-		{
-			double pointA = position.x - (this.dims.x / 2);
-			double pointB = position.x + (this.dims.x / 2);
-			
-			intersectionOverX = (pointA <= point.x) && (point.x <= pointB);
-		}
-		
-		boolean intersectionOverY;
-		{
-			double pointA = position.y - (this.dims.y / 2);
-			double pointB = position.y + (this.dims.y / 2);
-			
-			intersectionOverY = (pointA <= point.y) && (point.y <= pointB);
-		}
-		
-		return intersectionOverX && intersectionOverY;
 	}
 	
 	public static boolean areColliding(CollisionComponent collisionComponentA, CollisionComponent collisionComponentB)

@@ -2,16 +2,12 @@ package logic;
 
 public class Player extends GameNode
 {
-	private RayCaster rayCaster;
-	
 	private double velocity;
 	private double direction;
 
 	public Player(Vector2 position)
 	{
 		super(position);
-		
-		this.rayCaster = new RayCaster(this.position);
 	}
 	
 	public double getVelocity()
@@ -24,17 +20,12 @@ public class Player extends GameNode
 		return this.direction;
 	}
 	
-	public RayCaster getRayCaster()
-	{
-		return this.rayCaster;
-	}
-	
 	public void addToDirection(double degrees)
 	{
 		this.direction += degrees;
 		this.direction %= 360;
 		
-		this.rayCaster.setRaysDirection(direction);
+		this.getRaycastComponent().setRaysDirection(direction);
 	}
 	
 	public void setVelocity(double velocity)
@@ -47,8 +38,6 @@ public class Player extends GameNode
 	{
 		this.position.x = this.position.x + (velocity * time) * Math.cos(Math.toRadians(direction));
 		this.position.y = this.position.y + (velocity * time) * Math.sin(Math.toRadians(direction));
-		
-		this.rayCaster.setRaysSource(position);
 	}
 	
 	@Override
@@ -59,5 +48,10 @@ public class Player extends GameNode
 		this.velocity = -aux;
 		this.update(0.016);
 		this.velocity = +aux;
+	}
+	
+	@Override
+	public void manageIntersection(GameNode node)
+	{
 	}
 }
