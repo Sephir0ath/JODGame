@@ -76,9 +76,6 @@ public class PrincipalPanel extends JPanel
 			{
 				if(map != null)
 				{
-					if(inputManager.getDownKeys().contains(KeyEvent.VK_ESCAPE))
-						showPanel("MainMenu");
-					
 					map.setDownKeys(inputManager.getDownKeys());
 					map.repaint();
 				}
@@ -88,7 +85,7 @@ public class PrincipalPanel extends JPanel
 		setFocusable(true);
 		requestFocusInWindow();
 		
-		this.inputManager = new InputManager();
+		this.inputManager = new InputManager(this);
 		this.addKeyListener(this.inputManager);
 	}
 	

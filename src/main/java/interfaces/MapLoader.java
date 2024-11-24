@@ -41,8 +41,8 @@ public class MapLoader extends JPanel
 	
 	private final RotatedIcon textureTile = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("tile.png")));
 	private final RotatedIcon textureWall = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")));
-	private final RotatedIcon textureEnemy = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("enemyOriginal.png")));
-	private final RotatedIcon texturePlayer = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("playerOriginal.png")));
+	private final RotatedIcon textureEnemy = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png")));
+	private final RotatedIcon texturePlayer = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("player.png")));
 	
 	private static final double UPDATE_TIME = 0.016;
 	

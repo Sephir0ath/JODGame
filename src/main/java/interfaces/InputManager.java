@@ -8,10 +8,14 @@ import java.util.Set;
 
 public class InputManager implements KeyListener
 {
+	private PrincipalPanel owner;
+	
 	private Set<Integer> downKeys;
 	
-	public InputManager()
+	public InputManager(PrincipalPanel owner)
 	{
+		this.owner = owner;
+		
 		this.downKeys = new HashSet<>();
 	}
 	
@@ -28,6 +32,13 @@ public class InputManager implements KeyListener
 	@Override
 	public void keyPressed(KeyEvent event)
 	{
+		if(event.getKeyCode() == KeyEvent.VK_ESCAPE)
+		{
+			this.owner.showPanel("MainMenu");
+			
+			return;
+		}
+		
 		this.downKeys.add(event.getKeyCode());
 	}
 	
