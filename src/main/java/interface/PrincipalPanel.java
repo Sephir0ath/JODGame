@@ -9,6 +9,7 @@ import logic.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,6 +25,7 @@ public class PrincipalPanel extends JPanel {
     private final Player player;
     private JPanel actualPanel;
     private MapLoader mapLoader;
+    private Font pixelFont;
 
     public PrincipalPanel() {
         super();
@@ -34,12 +36,18 @@ public class PrincipalPanel extends JPanel {
         isActualPanelAMap = false;
         instance = this;
 
+        try {
+            pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/pixel_font.ttf")).deriveFont(18f);
+        } catch (Exception e) {
+            pixelFont = new Font("Monospaced", Font.BOLD, 18); // Fallback
+        }
+
 
         // -------- Menú --------------
-        MainMenuJPanel mainMenuJPanel = new MainMenuJPanel();
-        PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel();
-        CreditsJPanel creditsJPanel = new CreditsJPanel();
-        SettingsJPanel settingsJPanel = new SettingsJPanel();
+        MainMenuJPanel mainMenuJPanel = new MainMenuJPanel(pixelFont);
+        PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel(pixelFont);
+        CreditsJPanel creditsJPanel = new CreditsJPanel(pixelFont);
+        SettingsJPanel settingsJPanel = new SettingsJPanel(pixelFont);
 
         add(mainMenuJPanel, "MainMenu"); // Menú principal
         add(playLevelsJPanel, "PlayLevels"); // Menú de los niveles pre-hechos
