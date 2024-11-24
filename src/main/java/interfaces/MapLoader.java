@@ -3,7 +3,6 @@ package main.java.interfaces;
 import main.java.logic.*;
 
 import java.awt.*;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.io.BufferedReader;
@@ -39,10 +38,10 @@ public class MapLoader extends JPanel
 	
 	private Image textureBackground = new ImageIcon(this.getClass().getClassLoader().getResource("background.png")).getImage();
 	
-	private final RotatedIcon textureTile = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("tile.png")));
-	private final RotatedIcon textureWall = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")));
-	private final RotatedIcon textureEnemy = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png")));
-	private final RotatedIcon texturePlayer = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("player.png")));
+	private final Image textureTile = new ImageIcon(this.getClass().getClassLoader().getResource("tile.png")).getImage();
+	private final Image textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")).getImage();
+	private final Image textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png")).getImage();
+	private final Image texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png")).getImage();
 	
 	private static final double UPDATE_TIME = 0.016;
 	
@@ -215,23 +214,25 @@ public class MapLoader extends JPanel
 	@Override
 	protected void paintComponent(Graphics renderer)
 	{
-		if(this.downKeys.contains(KeyEvent.VK_A))
-			this.player.addToDirection(-1);
-		
-		if(this.downKeys.contains(KeyEvent.VK_D))
-			this.player.addToDirection(+1);
-		
-		if(this.downKeys.contains(KeyEvent.VK_W) || downKeys.contains(KeyEvent.VK_S))
 		{
-			if(this.downKeys.contains(KeyEvent.VK_W))
-				this.player.setVelocity(+100);
+			if(this.downKeys.contains(KeyEvent.VK_A))
+				this.player.addToDirection(-1);
 			
-			if(this.downKeys.contains(KeyEvent.VK_S))
-				this.player.setVelocity(-100);
+			if(this.downKeys.contains(KeyEvent.VK_D))
+				this.player.addToDirection(+1);
+			
+			if(this.downKeys.contains(KeyEvent.VK_W) || downKeys.contains(KeyEvent.VK_S))
+			{
+				if(this.downKeys.contains(KeyEvent.VK_W))
+					this.player.setVelocity(+100);
+				
+				if(this.downKeys.contains(KeyEvent.VK_S))
+					this.player.setVelocity(-100);
+			}
+			
+			else
+				this.player.setVelocity(0);
 		}
-		
-		else
-			this.player.setVelocity(0);
 		
 		super.paintComponent(renderer);
 		
@@ -350,12 +351,12 @@ public class MapLoader extends JPanel
 		int posX = (int) (position.x - (sizeX / 2));
 		int posY = (int) (position.y - (sizeY / 2));
 		
-		RotatedIcon rotatedIcon = graphicsComponent.getTexture();
+		Graphics2D renderer2 = (Graphics2D) renderer.create();
 		
-		rotatedIcon.setDims(graphicsComponent.getDims());
-		rotatedIcon.setDirection(direction);
+		renderer2.rotate(Math.toRadians(direction), posX + (sizeX / 2), posY + (sizeY / 2));
 		
-		rotatedIcon.paintIcon(null, renderer, posX, posY);
+		renderer2.drawImage(graphicsComponent.getTexture(), posX, posY, (int) sizeX, (int) sizeY, null);
+		renderer2.dispose();
 	}
 	
 	private void renderBox(Graphics renderer, Vector2 position, Vector2 size)
