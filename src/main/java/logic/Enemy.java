@@ -1,9 +1,8 @@
-package logic;
+package main.java.logic;
 
 public class Enemy extends GameNode
 {
 	private double velocity;
-	private double direction;
 	private double targetDirection;
 	
 	private Vector2 target;
@@ -14,8 +13,6 @@ public class Enemy extends GameNode
 		super(position);
 		
 		this.velocity = 50;
-		this.direction = 0;
-		
 		this.movementZone = movementZone;
 		
 		this.setTarget(this.movementZone.chooseLocation(this.position));

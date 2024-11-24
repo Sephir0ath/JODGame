@@ -1,4 +1,4 @@
-import Interface.Window;
+import main.java.interfaces.Window;
 
 public class Main
 {

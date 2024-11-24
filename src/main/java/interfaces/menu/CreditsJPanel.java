@@ -1,7 +1,7 @@
-package Interface.menu;
+package main.java.interfaces.menu;
 
-import Interface.PrincipalPanel;
-import Interface.Window;
+import main.java.interfaces.PrincipalPanel;
+import main.java.interfaces.Window;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,7 +20,7 @@ public class CreditsJPanel extends JPanel {
 
 
         try {
-            backgroundImage = ImageIO.read(new File("src/main/resources/menu_bg.png"));
+            backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
         } catch(IOException e) {
             e.printStackTrace();
         }

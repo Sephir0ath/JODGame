@@ -1,10 +1,9 @@
-package logic;
+package main.java.logic;
 
 public class Player extends GameNode
 {
 	private double velocity;
-	private double direction;
-
+	
 	public Player(Vector2 position)
 	{
 		super(position);
@@ -15,17 +14,10 @@ public class Player extends GameNode
 		return this.velocity;
 	}
 	
-	public double getDirection()
-	{
-		return this.direction;
-	}
-	
 	public void addToDirection(double degrees)
 	{
 		this.direction += degrees;
 		this.direction %= 360;
-		
-		this.getRaycastComponent().setRaysDirection(direction);
 	}
 	
 	public void setVelocity(double velocity)

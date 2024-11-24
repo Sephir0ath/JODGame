@@ -1,20 +1,19 @@
-package logic;
+package main.java.logic;
 
-import javax.swing.ImageIcon;
+import java.awt.*;
+
+import main.java.interfaces.RotatedIcon;
 
 public class GraphicsComponent extends Component
 {
 	private Vector2 dims;
-	
-	private ImageIcon texture;
-	
-	public GraphicsComponent(GameNode owner, ImageIcon texture, Vector2 dims)
+	private RotatedIcon texture;
+
+	public GraphicsComponent(GameNode owner, RotatedIcon texture, Vector2 dims)
 	{
 		super(owner);
 		
 		this.dims = dims;
-		this.owner = owner;
-		
 		this.texture = texture;
 	}
 	
@@ -22,8 +21,8 @@ public class GraphicsComponent extends Component
 	{
 		return this.dims;
 	}
-	
-	public ImageIcon getTexture()
+
+	public RotatedIcon getTexture()
 	{
 		return this.texture;
 	}

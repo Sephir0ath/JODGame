@@ -1,4 +1,4 @@
-package logic;
+package main.java.logic;
 
 public abstract class Component
 {

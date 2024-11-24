@@ -1,12 +1,14 @@
-package Interface;
+package main.java.interfaces;
 
-import Interface.menu.*;
-import logic.*;
+import main.java.interfaces.menu.*;
+import main.java.logic.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
 import javax.swing.*;
+
+import javax.imageio.ImageIO;
 
 import java.io.File;
 
@@ -27,21 +29,26 @@ public class PrincipalPanel extends JPanel
 	private InputManager inputManager;
 	
 	private ArrayList<MapLoader> maps;
-
-	public PrincipalPanel() {
+	
+	public PrincipalPanel()
+	{
 		instance = this;
 		
 		maps = new ArrayList<>();
 		cardLayout = new CardLayout();
+		
 		this.setLayout(cardLayout);
-
-		try {
+		
+		try
+		{
 			pixelFont = Font.createFont(Font.TRUETYPE_FONT, new File("src/main/resources/pixel_font.ttf")).deriveFont(18f);
-		} catch (Exception e) {
-			pixelFont = new Font("Monospaced", Font.BOLD, 18); // Fallback
 		}
-
-
+		
+		catch(Exception e)
+		{
+			pixelFont = new Font("Monospaced", Font.BOLD, 18);
+		}
+		
 		// -------- Menú --------------
 		MainMenuJPanel mainMenuJPanel = new MainMenuJPanel(pixelFont);
 		PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel(pixelFont);

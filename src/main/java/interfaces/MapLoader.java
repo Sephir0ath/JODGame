@@ -1,11 +1,13 @@
-package Interface;
+package main.java.interfaces;
 
-import logic.*;
+import main.java.logic.*;
 
 import java.awt.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -35,10 +37,12 @@ public class MapLoader extends JPanel
 	private final double windowSizeX = Window.getInstance().getContentPane().getSize().getWidth();
 	private final double windowSizeY = Window.getInstance().getContentPane().getSize().getHeight();
 	
-	private final ImageIcon textureTile = new ImageIcon(this.getClass().getClassLoader().getResource("tile.png"));
-	private final ImageIcon textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png"));
-	private final ImageIcon textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png"));
-	private final ImageIcon texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png"));
+	private Image textureBackground = new ImageIcon(this.getClass().getClassLoader().getResource("background.png")).getImage();
+	
+	private final RotatedIcon textureTile = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("tile.png")));
+	private final RotatedIcon textureWall = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")));
+	private final RotatedIcon textureEnemy = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("enemyOriginal.png")));
+	private final RotatedIcon texturePlayer = new RotatedIcon(new ImageIcon(this.getClass().getClassLoader().getResource("playerOriginal.png")));
 	
 	private static final double UPDATE_TIME = 0.016;
 	
@@ -47,7 +51,6 @@ public class MapLoader extends JPanel
 		this.setBackground(Color.BLACK);
 		
 		this.downKeys = new HashSet<>();
-		
 		this.nodes = new ArrayList<>();
 		
 		this.raycastComponents = new ArrayList<>();
@@ -125,9 +128,8 @@ public class MapLoader extends JPanel
 							type = 3;
 							node = new Player(position);
 							
-							raycastComponent = new RaycastComponent(node, position);
-							graphicsComponent = new GraphicsComponent(node, texturePlayer, new Vector2(25, 25));
-							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
+							graphicsComponent = new GraphicsComponent(node, texturePlayer, new Vector2(32, 32));
+							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
 							
 							this.player = (Player) node;
 						} break;
@@ -163,8 +165,8 @@ public class MapLoader extends JPanel
 							node = new Enemy(position, movementZone);
 							
 							raycastComponent = new RaycastComponent(node, position);
-							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(25, 25));
-							collisionComponent = new CollisionComponent(node, new Vector2(25, 25));
+							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(32, 32));
+							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
 						} break;
 					}
 					
@@ -233,6 +235,8 @@ public class MapLoader extends JPanel
 		
 		super.paintComponent(renderer);
 		
+		renderer.drawImage(textureBackground, 0, 0, null);
+		
 		for(CollisionComponent componentA : collisionComponents)
 		{
 			for(CollisionComponent componentB : collisionComponents)
@@ -277,9 +281,6 @@ public class MapLoader extends JPanel
 		
 		for(CollisionComponent component : collisionComponents)
 		{
-			if(component.getOwner() instanceof Player)
-				continue;
-			
 			if(component.getOwner() instanceof Enemy)
 				continue;
 			
@@ -340,6 +341,7 @@ public class MapLoader extends JPanel
 	
 	private void render(Graphics renderer, GraphicsComponent graphicsComponent)
 	{
+		double direction = graphicsComponent.getOwner().getDirection();
 		Vector2 position = this.center(graphicsComponent.getOwner().getPosition());
 		
 		double sizeX = graphicsComponent.getDims().x;
@@ -348,7 +350,12 @@ public class MapLoader extends JPanel
 		int posX = (int) (position.x - (sizeX / 2));
 		int posY = (int) (position.y - (sizeY / 2));
 		
-		renderer.drawImage(graphicsComponent.getTexture().getImage(), posX, posY, (int) sizeX, (int) sizeY, null);
+		RotatedIcon rotatedIcon = graphicsComponent.getTexture();
+		
+		rotatedIcon.setDims(graphicsComponent.getDims());
+		rotatedIcon.setDirection(direction);
+		
+		rotatedIcon.paintIcon(null, renderer, posX, posY);
 	}
 	
 	private void renderBox(Graphics renderer, Vector2 position, Vector2 size)

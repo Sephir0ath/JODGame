@@ -1,4 +1,4 @@
-package logic;
+package main.java.logic;
 
 import java.util.ArrayList;
 
@@ -11,7 +11,6 @@ public class CollisionComponent extends Component
 		super(owner);
 		
 		this.dims = dims;
-		this.owner = owner;
 	}
 	
 	public static boolean areColliding(CollisionComponent collisionComponentA, CollisionComponent collisionComponentB)

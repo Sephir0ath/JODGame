@@ -1,4 +1,4 @@
-package Interface;
+package main.java.interfaces;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
