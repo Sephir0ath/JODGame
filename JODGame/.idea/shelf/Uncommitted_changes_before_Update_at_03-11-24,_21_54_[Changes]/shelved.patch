@@ -1,0 +1,250 @@
+Index: src/main/java/Interface/PrincipalPanel.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package Interface;\n\nimport Interface.menu.CreditsJPanel;\nimport Interface.menu.MainMenuJPanel;\nimport Interface.menu.PlayLevelsJPanel;\nimport Interface.menu.SettingsJPanel;\nimport logic.Enemies.ActiveEnemyMovement;\nimport logic.Enemies.Enemy;\nimport logic.Enemies.PassiveEnemyMovement;\nimport logic.Player;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.ArrayList;\nimport java.util.Objects;\nimport java.util.concurrent.ScheduledExecutorService;\nimport java.util.concurrent.ScheduledThreadPoolExecutor;\nimport java.util.concurrent.TimeUnit;\n\npublic class PrincipalPanel extends JPanel {\n    private PlayerController playerController;\n    private EnemyController enemyController;\n    private PassiveEnemyMovement passiveEnemyMovement;\n    private ActiveEnemyMovement activeEnemyMovement;\n    private ArrayList<MapLoader> premadeMaps;\n    private static PrincipalPanel instance;\n    private static boolean isActualPanelAMap;\n    private CardLayout cardLayout;\n    private final Player player;\n    private JPanel actualPanel;\n    private MapLoader mapLoader;\n\n    public PrincipalPanel() {\n        super();\n        this.player = new Player(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource(\"NullSpace.png\"))));\n        premadeMaps = new ArrayList<>();\n        cardLayout = new CardLayout();\n        this.setLayout(cardLayout);\n        isActualPanelAMap = false;\n        instance = this;\n\n\n        // -------- Menú --------------\n        MainMenuJPanel mainMenuJPanel = new MainMenuJPanel();\n        PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel();\n        CreditsJPanel creditsJPanel = new CreditsJPanel();\n        SettingsJPanel settingsJPanel = new SettingsJPanel();\n\n        add(mainMenuJPanel, \"MainMenu\"); // Menú principal\n        add(playLevelsJPanel, \"PlayLevels\"); // Menú de los niveles prehechos\n        add(settingsJPanel, \"Settings\");\n        add(creditsJPanel, \"Credits\");\n\n        // -------- Levels ------------\n        for (int i = 0; i < 7; i++) {\n            premadeMaps.add(new MapLoader(player, \"src/main/resources/map\" + i + \".txt\"));\n            add(premadeMaps.get(i), \"map\" + i);\n        }\n\n\n        playerController = new PlayerController(this.player);\n        setFocusable(true);\n        requestFocusInWindow();\n        addKeyListener(playerController);\n        enemyController = new EnemyController();\n        addKeyListener(enemyController);\n        passiveEnemyMovement = new PassiveEnemyMovement();\n        activeEnemyMovement = new ActiveEnemyMovement();\n\n        //Player movement scheduler\n        // Esto repinta los niveles y actualiza la posición del jugador\n\n        // QUIZA DEJAR EN UN SOLO HILO EVITA ERRORES DE CONCURRENCIA\n        ScheduledExecutorService updateScheduler = new ScheduledThreadPoolExecutor(1);\n        updateScheduler.scheduleAtFixedRate(new Runnable() {\n            @Override\n            public void run() {\n                player.updatePlayerPosition(0.016);\n                if (isActualPanelAMap) {\n                    mapLoader.repaint();\n                }\n\n            }\n        }, 0, 10, TimeUnit.MILLISECONDS);\n\n\n        // ES POSIBLE QUE USAR ESTE OTRO HILO PARA LOS ENEMIGOS CAUSE EXCEPCIONES DE CONCURRENCIA\n        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(2);\n        addKeyListener(enemyController);\n        enemiesScheduler.scheduleAtFixedRate(new Runnable() {\n            @Override\n            public void run() {\n                enemyController.updateAllEnemiesPositions(0.016);\n                for(Enemy enemy : passiveEnemyMovement.getEnemies()) {\n                    if(!enemy.isDetectingPlayer()) {\n                        passiveEnemyMovement.moveEnemy(enemy);\n                    }\n                    // passiveEnemyMovement.moveEnemy(enemy);\n\n                }\n                if (isActualPanelAMap) {\n                    mapLoader.repaint();\n                }\n            }\n        }, 0, 10, TimeUnit.MILLISECONDS);\n\n    }\n\n    public void addPanel(JPanel panel, String name) {\n        this.add(panel, name);\n    }\n\n    public void showPanel(String panelName){ // -> Acá mapLoader tiene un valor asignado, luego se puede obtener el array de enemigos\n        cardLayout.show(this, panelName);\n        if (panelName.contains(\"map\")){\n            isActualPanelAMap = true;\n            mapLoader = premadeMaps.get(Character.getNumericValue(panelName.charAt(panelName.length() - 1))); // Obtener el index del ultimo digito del String de panelName\n            player.setPos(mapLoader.getPlayerFirstLocation());\n\n            enemyController.setEnemiesArray(mapLoader.getEnemies()); // -> Para movimiento con teclado (para test)\n\n            for(Enemy enemy : mapLoader.getEnemies()) {\n                passiveEnemyMovement.setupEnemyMovement(enemy, mapLoader.getEnemies(), mapLoader.getWalls(),\n                                                 mapLoader.getPlayer(), mapLoader.getMapMatrix(),\n                                                 mapLoader.getTileWidth(), mapLoader.getTileHeight()); // -> Para movimiento inteligente de enemigos\n\n                activeEnemyMovement.setupEnemyMovement(enemy, mapLoader.getEnemies(), mapLoader.getWalls(),\n                                                 mapLoader.getPlayer(), mapLoader.getMapMatrix(),\n                                                 mapLoader.getTileWidth(), mapLoader.getTileHeight());\n\n            }\n\n\n        }\n\n        else{\n            isActualPanelAMap = false;\n        }\n\n    }\n\n    public static PrincipalPanel getInstance(){\n        if(instance == null){\n            instance = new PrincipalPanel();\n        }\n        return instance;\n    }\n\n    public Player getPlayer(){\n        return this.player;\n    }\n\n    public boolean isActualPanelAMap(){\n        return isActualPanelAMap;\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/Interface/PrincipalPanel.java b/src/main/java/Interface/PrincipalPanel.java
+--- a/src/main/java/Interface/PrincipalPanel.java	(revision 28237117b4bde46d2591a4b0cdcb9cc6421a99a3)
++++ b/src/main/java/Interface/PrincipalPanel.java	(date 1730681485882)
+@@ -8,6 +8,7 @@
+ import logic.Enemies.Enemy;
+ import logic.Enemies.PassiveEnemyMovement;
+ import logic.Player;
++import logic.Wall;
+ 
+ import javax.swing.*;
+ import java.awt.*;
+@@ -29,12 +30,14 @@
+     private final Player player;
+     private JPanel actualPanel;
+     private MapLoader mapLoader;
++    private ArrayList<Wall> wallArrayList;
+ 
+     public PrincipalPanel() {
+         super();
+         this.player = new Player(new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource("NullSpace.png"))));
+         premadeMaps = new ArrayList<>();
+         cardLayout = new CardLayout();
++        wallArrayList = new ArrayList<>();
+         this.setLayout(cardLayout);
+         isActualPanelAMap = false;
+         instance = this;
+@@ -76,6 +79,11 @@
+             @Override
+             public void run() {
+                 player.updatePlayerPosition(0.016);
++
++                for (int i = 0; i < wallArrayList.size(); i++) {
++                    player.checkIntersectionWithHitBox(wallArrayList.get(i));
++                }
++
+                 if (isActualPanelAMap) {
+                     mapLoader.repaint();
+                 }
+@@ -85,7 +93,7 @@
+ 
+ 
+         // ES POSIBLE QUE USAR ESTE OTRO HILO PARA LOS ENEMIGOS CAUSE EXCEPCIONES DE CONCURRENCIA
+-        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(2);
++        ScheduledExecutorService enemiesScheduler = new ScheduledThreadPoolExecutor(1);
+         addKeyListener(enemyController);
+         enemiesScheduler.scheduleAtFixedRate(new Runnable() {
+             @Override
+@@ -116,7 +124,7 @@
+             isActualPanelAMap = true;
+             mapLoader = premadeMaps.get(Character.getNumericValue(panelName.charAt(panelName.length() - 1))); // Obtener el index del ultimo digito del String de panelName
+             player.setPos(mapLoader.getPlayerFirstLocation());
+-
++            wallArrayList = mapLoader.getWalls();
+             enemyController.setEnemiesArray(mapLoader.getEnemies()); // -> Para movimiento con teclado (para test)
+ 
+             for(Enemy enemy : mapLoader.getEnemies()) {
+Index: src/main/java/logic/Wall.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package logic;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.ArrayList;\n\npublic class Wall extends GameObject {\n    private ArrayList<Point> WallVertices;\n    private ArrayList<Line> lines;\n    private Point a;\n    private int height;\n    private int width;\n    Point topLeftPoint;\n    Point topRightPoint;\n    Point bottomLeftPoint;\n    Point bottomRightPoint;\n    public Wall(Point a, int height, int width, ImageIcon texture) {\n        super(texture);\n        this.height = height;\n        this.width = width;\n        topLeftPoint = a;\n        topRightPoint = new Point(a.x + width, a.y) ;\n        bottomLeftPoint = new Point(a.x, a.y+height);\n        bottomRightPoint = new Point(a.x+width, a.y+height);\n        lines = new ArrayList<>();\n        lines.add(new Line(topLeftPoint, topRightPoint));\n        lines.add(new Line(bottomLeftPoint, bottomRightPoint));\n        lines.add(new Line(bottomLeftPoint, topLeftPoint));\n        lines.add(new Line(bottomRightPoint, topRightPoint));\n\n    }\n\n    public ArrayList<Line> getLines() {\n        return lines;\n    }\n\n    public void updatePosition(Point newPos) { // -> ESTE METODO ES PARA ACTUALIZAR EL MURO DEL JUGADOR\n        Point topLeftPoint = newPos;\n        Point topRightPoint = new Point(newPos.x + width, newPos.y);\n        Point bottomLeftPoint = new Point(newPos.x, newPos.y + height);\n        Point bottomRightPoint = new Point(newPos.x + width, newPos.y + height);\n\n        lines.clear();\n        lines.add(new Line(topLeftPoint, topRightPoint));\n        lines.add(new Line(bottomLeftPoint, bottomRightPoint));\n        lines.add(new Line(bottomLeftPoint, topLeftPoint));\n        lines.add(new Line(bottomRightPoint, topRightPoint));\n    }\n\n    public boolean containsPoint(Point point) {\n        int x = point.x;\n        int y = point.y;\n\n        int left = topLeftPoint.x;\n        int right = topLeftPoint.x + width;\n        int top = topLeftPoint.y;\n        int bottom = topLeftPoint.y + height;\n\n\n        return x >= left && x <= right && y >= top && y <= bottom;\n\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/logic/Wall.java b/src/main/java/logic/Wall.java
+--- a/src/main/java/logic/Wall.java	(revision 28237117b4bde46d2591a4b0cdcb9cc6421a99a3)
++++ b/src/main/java/logic/Wall.java	(date 1730681485882)
+@@ -8,6 +8,7 @@
+     private ArrayList<Point> WallVertices;
+     private ArrayList<Line> lines;
+     private Point a;
++    private Rectangle hitBox;
+     private int height;
+     private int width;
+     Point topLeftPoint;
+@@ -19,6 +20,7 @@
+         this.height = height;
+         this.width = width;
+         topLeftPoint = a;
++        hitBox = new Rectangle(topLeftPoint.x, topLeftPoint.y, width, height);
+         topRightPoint = new Point(a.x + width, a.y) ;
+         bottomLeftPoint = new Point(a.x, a.y+height);
+         bottomRightPoint = new Point(a.x+width, a.y+height);
+@@ -61,4 +63,8 @@
+ 
+     }
+ 
++    public Rectangle getHitBox() {
++        return hitBox;
++    }
++
+ }
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"2ad01dd2-1bba-49e6-906c-2f6da29cc195\" name=\"Changes\" comment=\"\">\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Interface/MapLoader.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Interface/MapLoader.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/Interface/PrincipalPanel.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/Interface/PrincipalPanel.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/logic/Enemies/Enemy.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/logic/Enemies/Enemy.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/logic/Enemies/PassiveEnemyMovement.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/logic/Enemies/PassiveEnemyMovement.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/logic/Ray.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/logic/Ray.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/src/main/java/logic/RayCaster.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/java/logic/RayCaster.java\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/Interface/PrincipalPanel.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/Interface/PrincipalPanel.class\" afterDir=\"false\" />\n      <change beforePath=\"$PROJECT_DIR$/target/classes/logic/RayCaster.class\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/target/classes/logic/RayCaster.class\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Interface\" />\n        <option value=\"Class\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 3\n}</component>\n  <component name=\"ProjectId\" id=\"2nRNrRTCo2wVuVh2DQqTrTdROE5\" />\n  <component name=\"ProjectLevelVcsManager\">\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\n  </component>\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;Application.Main.executor&quot;: &quot;Run&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/felip/PPGame/JODGame&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\n    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/felip/IdeaProjects/JODGame/src/main/java/org/example/Main.java&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"CopyFile.RECENT_KEYS\">\n      <recent name=\"C:\\Users\\felip\\IdeaProjects\\JODGame\\src\\main\\resources\" />\n    </key>\n  </component>\n  <component name=\"RunManager\">\n    <configuration name=\"Main\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <option name=\"MAIN_CLASS_NAME\" value=\"org.example.Main\" />\n      <module name=\"JODGame\" />\n      <extension name=\"coverage\">\n        <pattern>\n          <option name=\"PATTERN\" value=\"org.example.*\" />\n          <option name=\"ENABLED\" value=\"true\" />\n        </pattern>\n      </extension>\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Application.Main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103\" />\n        <option value=\"bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"2ad01dd2-1bba-49e6-906c-2f6da29cc195\" name=\"Changes\" comment=\"\" />\n      <created>1728932129614</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1728932129614</updated>\n      <workItem from=\"1728932130654\" duration=\"13000\" />\n      <workItem from=\"1728934076269\" duration=\"1000\" />\n      <workItem from=\"1728934643358\" duration=\"11389000\" />\n      <workItem from=\"1729012707712\" duration=\"14388000\" />\n      <workItem from=\"1729127382266\" duration=\"327000\" />\n      <workItem from=\"1729539313865\" duration=\"20000\" />\n      <workItem from=\"1730075924912\" duration=\"331000\" />\n      <workItem from=\"1730076264086\" duration=\"3533000\" />\n      <workItem from=\"1730139585280\" duration=\"5653000\" />\n      <workItem from=\"1730202989399\" duration=\"13173000\" />\n      <workItem from=\"1730253266594\" duration=\"2497000\" />\n      <workItem from=\"1730339896671\" duration=\"10605000\" />\n      <workItem from=\"1730512905670\" duration=\"2188000\" />\n      <workItem from=\"1730562413977\" duration=\"13607000\" />\n      <workItem from=\"1730583175304\" duration=\"19378000\" />\n      <workItem from=\"1730642370847\" duration=\"22155000\" />\n      <workItem from=\"1730667879246\" duration=\"3780000\" />\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"Vcs.Log.Tabs.Properties\">\n    <option name=\"TAB_STATES\">\n      <map>\n        <entry key=\"MAIN\">\n          <value>\n            <State />\n          </value>\n        </entry>\n      </map>\n    </option>\n  </component>\n  <component name=\"XDebuggerManager\">\n    <breakpoint-manager>\n      <breakpoints>\n        <breakpoint enabled=\"true\" type=\"java-exception\">\n          <properties class=\"java.util.ConcurrentModificationException\" package=\"java.util\" />\n          <option name=\"timeStamp\" value=\"1\" />\n        </breakpoint>\n      </breakpoints>\n    </breakpoint-manager>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 28237117b4bde46d2591a4b0cdcb9cc6421a99a3)
++++ b/.idea/workspace.xml	(date 1730681589123)
+@@ -5,14 +5,16 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="2ad01dd2-1bba-49e6-906c-2f6da29cc195" name="Changes" comment="">
+-      <change beforePath="$PROJECT_DIR$/src/main/java/Interface/MapLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Interface/MapLoader.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/Interface/PrincipalPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Interface/PrincipalPanel.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/logic/Enemies/Enemy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/Enemies/Enemy.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/java/logic/Enemies/PassiveEnemyMovement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/Enemies/PassiveEnemyMovement.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/logic/Ray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/Ray.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/java/logic/RayCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/RayCaster.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/logic/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/Player.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/java/logic/Wall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/logic/Wall.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/Interface/PrincipalPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Interface/PrincipalPanel$1.class" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/target/classes/Interface/PrincipalPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Interface/PrincipalPanel.class" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/target/classes/logic/RayCaster.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/logic/RayCaster.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/logic/Player.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/logic/Player.class" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/target/classes/logic/Wall.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/logic/Wall.class" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -86,8 +88,8 @@
+   <component name="SharedIndexes">
+     <attachedChunks>
+       <set>
+-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
+-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
++        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
++        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+       </set>
+     </attachedChunks>
+   </component>
+@@ -116,6 +118,7 @@
+       <workItem from="1730583175304" duration="19378000" />
+       <workItem from="1730642370847" duration="22155000" />
+       <workItem from="1730667879246" duration="3780000" />
++      <workItem from="1730677688068" duration="3329000" />
+     </task>
+     <servers />
+   </component>
+Index: src/main/java/logic/Player.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package logic;\n\nimport javax.swing.*;\nimport java.awt.*;\nimport java.util.ArrayList;\nimport java.util.Objects;\n\npublic class Player extends GameObject {\n    private RayCaster rayCaster;\n    private double direction;\n    private int velocity = 0;\n    private Point pos;\n    private Wall playerWall; // -> Para deteccion enemigo a jugador\n    private ImageIcon playerWallTexture; // -> Solo por ahora para verificar muro de jugador\n\n    public Player(ImageIcon img) {\n        super(img);\n        rayCaster = new RayCaster(new Point(0,0));\n        playerWall = new Wall(new Point(0,0), img.getIconHeight(), img.getIconWidth(), null);\n    }\n\n\n    public void addToDirection(double value){\n        direction += value;\n        normalizeDirection();\n        rayCaster.updateRaysDirection(direction);\n    }\n\n\n    private void normalizeDirection() {\n        this.direction = (this.direction % 360 + 360) % 360;\n    }\n\n\n    public void setVelocity(int velocity){\n        this.velocity = velocity;\n    }\n\n\n    public void updatePlayerPosition(double timeStep){\n        double newX = pos.getX() + velocity*timeStep * Math.cos(Math.toRadians(direction));\n        double newY = pos.getY() + velocity*timeStep * Math.sin(Math.toRadians(direction));\n\n        pos.setLocation(newX, newY);\n        rayCaster.updateRaysPos(pos);\n\n        playerWall.updatePosition(pos);\n    }\n\n\n    public Point getPos() {\n        return pos;\n    }\n\n    public void setPos(Point pos) {\n        this.pos = pos;\n        playerWall.updatePosition(pos);\n        rayCaster.updateRaysPos(pos);\n    }\n\n\n    public RayCaster getRaycaster() {\n        return rayCaster;\n    }\n\n\n    public double getDirection() {\n        return direction;\n    }\n\n    public ImageIcon getPlayerWallTexture() {\n        return playerWallTexture;\n    }\n\n    public Point getPlayerWallPosition() {\n        return pos;\n    }\n\n    public Wall getPlayerWall() {\n        return playerWall;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/logic/Player.java b/src/main/java/logic/Player.java
+--- a/src/main/java/logic/Player.java	(revision 28237117b4bde46d2591a4b0cdcb9cc6421a99a3)
++++ b/src/main/java/logic/Player.java	(date 1730681485882)
+@@ -11,14 +11,63 @@
+     private int velocity = 0;
+     private Point pos;
+     private Wall playerWall; // -> Para deteccion enemigo a jugador
++    private Rectangle hitBox;
+     private ImageIcon playerWallTexture; // -> Solo por ahora para verificar muro de jugador
+ 
+     public Player(ImageIcon img) {
+         super(img);
++        hitBox = new Rectangle(20,20);
+         rayCaster = new RayCaster(new Point(0,0));
+         playerWall = new Wall(new Point(0,0), img.getIconHeight(), img.getIconWidth(), null);
+     }
+ 
++    public void checkIntersectionWithHitBox(Wall wall) {
++        if (hitBox.intersects(wall.getHitBox())) {
++            System.out.println("hitBox intersects");
++            handleCollisionWithWall(wall);
++        }
++    }
++
++    public void handleCollisionWithWall(Wall wall) {
++        switch (getCollisionSide(wall.getHitBox())){
++            case 0:
++                setPos(new Point(getPos().x,(int)(wall.getHitBox().getY() - hitBox.getHeight())));
++                break;
++
++            case 1:
++                setPos(new Point(getPos().x - 2,getPos().y));
++                setVelocity(0);
++                break;
++
++            case 2:
++                setPos(new Point(getPos().x + 2,getPos().y));
++                setVelocity(0);
++                break;
++
++            case 3:
++                setPos(new Point(getPos().x, (int)(wall.getHitBox().getY() + wall.getHitBox().getHeight() + 3)));
++                break;
++        }
++    }
++
++    public int getCollisionSide(Rectangle rectangle){
++        if (hitBox.getY() < rectangle.getY()){
++            return 0; //Arriba
++        }
++        else if (hitBox.getX() <= rectangle.getX() && hitBox.getY() > rectangle.getY()) {
++            return 1; //Izquierda
++        }
++        else if (hitBox.getX() >= rectangle.getX() + rectangle.getWidth() - 5 && hitBox.getY() > rectangle.getY()) {
++            return 2; // Derecha
++        }
++
++        else if (hitBox.getY() < rectangle.getY() + rectangle.getHeight()){
++            return 3; // Abajo
++        }
++        else{
++            return 4;
++        }
++    }
+ 
+     public void addToDirection(double value){
+         direction += value;
+@@ -44,6 +93,7 @@
+         pos.setLocation(newX, newY);
+         rayCaster.updateRaysPos(pos);
+ 
++        hitBox.setLocation((int) newX, (int) newY);
+         playerWall.updatePosition(pos);
+     }
+ 
+@@ -55,6 +105,7 @@
+     public void setPos(Point pos) {
+         this.pos = pos;
+         playerWall.updatePosition(pos);
++        hitBox.setLocation((int) pos.getX(), (int) pos.getY());
+         rayCaster.updateRaysPos(pos);
+     }
+ 
+@@ -76,6 +127,10 @@
+         return pos;
+     }
+ 
++    public Rectangle getHitBox(){
++        return hitBox;
++    }
++
+     public Wall getPlayerWall() {
+         return playerWall;
+     }

@@ -40,6 +40,7 @@ public class Player extends GameNode
 		this.velocity = -aux;
 		this.update(0.016);
 		this.velocity = +aux;
+
 	}
 	
 	@Override

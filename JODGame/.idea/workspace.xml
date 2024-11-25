@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2ad01dd2-1bba-49e6-906c-2f6da29cc195" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;pyrrss&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Sephir0ath/JODGame&quot;,
+    &quot;accountId&quot;: &quot;7c28049b-49ef-43fc-9650-0dedbe3e444e&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2nRNrRTCo2wVuVh2DQqTrTdROE5" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "dev",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/pyrr/Escritorio/ProyectoProgramacion/JODGame",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/felip/IdeaProjects/JODGame/src/main/java/org/example/Main.java",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.203125",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\felip\IdeaProjects\JODGame\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="JODGame" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../src/main/java" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="main.java.interface.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="main.java.logic.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2ad01dd2-1bba-49e6-906c-2f6da29cc195" name="Changes" comment="" />
+      <created>1728932129614</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1728932129614</updated>
+      <workItem from="1728932130654" duration="13000" />
+      <workItem from="1728934076269" duration="1000" />
+      <workItem from="1728934643358" duration="11389000" />
+      <workItem from="1729012707712" duration="14388000" />
+      <workItem from="1729127382266" duration="327000" />
+      <workItem from="1729539313865" duration="20000" />
+      <workItem from="1730075924912" duration="331000" />
+      <workItem from="1730076264086" duration="3533000" />
+      <workItem from="1730139585280" duration="5653000" />
+      <workItem from="1730202989399" duration="13173000" />
+      <workItem from="1730253266594" duration="2497000" />
+      <workItem from="1730339896671" duration="10605000" />
+      <workItem from="1730512905670" duration="2188000" />
+      <workItem from="1730562413977" duration="13607000" />
+      <workItem from="1730583175304" duration="19378000" />
+      <workItem from="1730642370847" duration="22155000" />
+      <workItem from="1730667879246" duration="3780000" />
+      <workItem from="1731380628628" duration="208000" />
+      <workItem from="1731544634283" duration="104000" />
+      <workItem from="1731544782782" duration="577000" />
+      <workItem from="1731545621885" duration="6000" />
+      <workItem from="1731545651864" duration="6000" />
+      <workItem from="1731548831019" duration="8000" />
+      <workItem from="1731946894473" duration="208000" />
+      <workItem from="1732035590133" duration="118000" />
+      <workItem from="1732374181655" duration="61000" />
+      <workItem from="1732375006030" duration="27000" />
+      <workItem from="1732376129808" duration="1428000" />
+      <workItem from="1732377571181" duration="1857000" />
+      <workItem from="1732379436045" duration="125000" />
+      <workItem from="1732379572700" duration="3708000" />
+      <workItem from="1732402491569" duration="793000" />
+      <workItem from="1732403298926" duration="27000" />
+      <workItem from="1732403334940" duration="29000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.util.ConcurrentModificationException" package="java.util" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
