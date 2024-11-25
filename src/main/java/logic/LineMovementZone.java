@@ -2,8 +2,8 @@ package main.java.logic;
 
 public class LineMovementZone extends MovementZone
 {
-	public Vector2 pointA;
-	public Vector2 pointB;
+	private Vector2 pointA;
+	private Vector2 pointB;
 	
 	public LineMovementZone(Vector2 pointA, Vector2 pointB)
 	{
@@ -23,5 +23,15 @@ public class LineMovementZone extends MovementZone
 			location = this.pointA;
 		
 		return location;
+	}
+	
+	public Vector2 getPointA()
+	{
+		return this.pointA;
+	}
+	
+	public Vector2 getPointB()
+	{
+		return this.pointB;
 	}
 }

@@ -2,8 +2,8 @@ package main.java.logic;
 
 public class BoxMovementZone extends MovementZone
 {
-	public Vector2 dims;
-	public Vector2 position;
+	private Vector2 dims;
+	private Vector2 position;
 	
 	public BoxMovementZone(Vector2 position, Vector2 dims)
 	{
@@ -23,5 +23,15 @@ public class BoxMovementZone extends MovementZone
 		location.y = this.position.y + (sign2 * (Math.random() * (this.dims.y / 2)));
 		
 		return location;
+	}
+	
+	public Vector2 getDims()
+	{
+		return this.dims;
+	}
+	
+	public Vector2 getPosition()
+	{
+		return this.position;
 	}
 }

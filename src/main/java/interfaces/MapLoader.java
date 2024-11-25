@@ -322,7 +322,7 @@ public class MapLoader extends JPanel
 				BoxMovementZone zone = (BoxMovementZone) movementZone;
 				
 				renderer.setColor(Color.GREEN);
-				this.renderBox(renderer, zone.position, zone.dims);
+				this.renderBox(renderer, zone.getPosition(), zone.getDims());
 			}
 			
 			if(movementZone instanceof LineMovementZone)
@@ -330,7 +330,7 @@ public class MapLoader extends JPanel
 				LineMovementZone zone = (LineMovementZone) movementZone;
 				
 				renderer.setColor(Color.GREEN);
-				this.renderLine(renderer, zone.pointA, zone.pointB);
+				this.renderLine(renderer, zone.getPointA(), zone.getPointB());
 			}
 		}
 	}
