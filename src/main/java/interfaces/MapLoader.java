@@ -21,6 +21,8 @@ import java.awt.event.KeyEvent;
 
 public class MapLoader extends JPanel
 {
+	private static MapLoader instance;
+
 	private Player player;
 	
 	private Set<Integer> downKeys;
@@ -29,7 +31,13 @@ public class MapLoader extends JPanel
 	private ArrayList<RaycastComponent> raycastComponents;
 	private ArrayList<GraphicsComponent> graphicsComponents;
 	private ArrayList<CollisionComponent> collisionComponents;
-	
+
+	private ArrayList<Collectable> collectables;
+
+	private ArrayList<GameNode> nodesToRemove;
+
+	private ArrayList<SimpleEntry<GameNode, Integer>> auxNodes;
+
 	private final double tileW = 80;
 	private final double tileH = 80;
 	
@@ -42,9 +50,11 @@ public class MapLoader extends JPanel
 	private final Image textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")).getImage();
 	private final Image textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png")).getImage();
 	private final Image texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png")).getImage();
-	
+	private final Image textureCollectable = new ImageIcon(this.getClass().getClassLoader().getResource("burguer.png")).getImage();
+
 	private static final double UPDATE_TIME = 0.016;
-	
+
+
 	public MapLoader(String file)
 	{
 		this.setBackground(Color.BLACK);
@@ -55,6 +65,10 @@ public class MapLoader extends JPanel
 		this.raycastComponents = new ArrayList<>();
 		this.graphicsComponents = new ArrayList<>();
 		this.collisionComponents = new ArrayList<>();
+
+		this.collectables = new ArrayList<>();
+
+		this.nodesToRemove = new ArrayList<>();
 		
 		int rowCount = 0;
 		int colCount = 0;
@@ -78,7 +92,7 @@ public class MapLoader extends JPanel
 			}
 		}
 		
-		ArrayList<SimpleEntry<GameNode, Integer>> auxNodes = new ArrayList<>();
+		auxNodes = new ArrayList<>();
 		
 		try(BufferedReader reader = new BufferedReader(new FileReader(file)))
 		{
@@ -166,6 +180,18 @@ public class MapLoader extends JPanel
 							raycastComponent = new RaycastComponent(node, position);
 							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
+						} break;
+
+						case '4':
+						{
+							type = 4;
+							node = new Collectable(position, this);
+							graphicsComponent = new GraphicsComponent(node, textureCollectable, new Vector2(32, 32));
+							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
+
+							collectables.add((Collectable) node);
+
+
 						} break;
 					}
 					
@@ -333,13 +359,47 @@ public class MapLoader extends JPanel
 				this.renderLine(renderer, zone.getPointA(), zone.getPointB());
 			}
 		}
+
+		// -> Al final de cada iteración se revisa si es que hay nodos para eliminar
+		if(!nodesToRemove.isEmpty())
+		{
+			for(GameNode node : nodesToRemove)
+			{
+				nodes.remove(node);
+				//		auxNodes.remove(collectable);
+				collisionComponents.remove(node.getCollisionComponent());
+				graphicsComponents.remove(node.getGraphicsComponent());
+			}
+		}
+
+		checkLevelObjective();
+
 	}
 	
 	public void setDownKeys(Set<Integer> downKeys)
 	{
 		this.downKeys = downKeys;
 	}
-	
+
+	// ------> OBJETIVOS DEL JUEGO
+	public void removeCollectable(Collectable collectable)
+	{
+
+		nodesToRemove.add(collectable);
+		collectables.remove(collectable);
+
+	}
+
+	public void checkLevelObjective()
+	{
+		if(collectables.isEmpty())
+		{
+			// Se completa nivel
+			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+		}
+	}
+
+
 	private void render(Graphics renderer, GraphicsComponent graphicsComponent)
 	{
 		double direction = graphicsComponent.getOwner().getDirection();
