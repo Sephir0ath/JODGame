@@ -1,4 +1,4 @@
-# Proyecto de Programacion
+# PROYECTO DE PROGRAMACION
 
 ## Ejecucion
 

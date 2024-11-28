@@ -29,7 +29,7 @@ public class CollisionComponent extends Component
 			double pointB1 = positionB.x - (dimsB.x / 2);
 			double pointB2 = positionB.x + (dimsB.x / 2);
 			
-			intersectionOverX = ((pointA1 < pointB1) && (pointB1 < pointA2)) || ((pointB1 < pointA1) && (pointA1 < pointB2));
+			intersectionOverX = ((pointA1 <= pointB1) && (pointB1 <= pointA2)) || ((pointB1 <= pointA1) && (pointA1 <= pointB2));
 		}
 		
 		boolean intersectionOverY;
@@ -40,7 +40,7 @@ public class CollisionComponent extends Component
 			double pointB1 = positionB.y - (dimsB.y / 2);
 			double pointB2 = positionB.y + (dimsB.y / 2);
 			
-			intersectionOverY = ((pointA1 < pointB1) && (pointB1 < pointA2)) || ((pointB1 < pointA1) && (pointA1 < pointB2));
+			intersectionOverY = ((pointA1 <= pointB1) && (pointB1 <= pointA2)) || ((pointB1 <= pointA1) && (pointA1 <= pointB2));
 		}
 		
 		return intersectionOverX && intersectionOverY;

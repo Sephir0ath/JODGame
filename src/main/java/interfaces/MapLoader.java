@@ -139,7 +139,7 @@ public class MapLoader extends JPanel
 								continue;
 							
 							type = 3;
-							node = new Player(position);
+							node = new Player(position, 5);
 							
 							graphicsComponent = new GraphicsComponent(node, texturePlayer, new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
@@ -186,12 +186,11 @@ public class MapLoader extends JPanel
 						{
 							type = 4;
 							node = new Collectable(position, this);
+							
 							graphicsComponent = new GraphicsComponent(node, textureCollectable, new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
-
+							
 							collectables.add((Collectable) node);
-
-
 						} break;
 					}
 					
@@ -244,10 +243,10 @@ public class MapLoader extends JPanel
 		
 		{
 			if(this.downKeys.contains(KeyEvent.VK_A))
-				this.player.addToDirection(-1);
+				this.player.addToDirection(-1.25);
 			
 			if(this.downKeys.contains(KeyEvent.VK_D))
-				this.player.addToDirection(+1);
+				this.player.addToDirection(+1.25);
 			
 			if(this.downKeys.contains(KeyEvent.VK_W) || downKeys.contains(KeyEvent.VK_S))
 			{
@@ -298,11 +297,7 @@ public class MapLoader extends JPanel
 		}
 		
 		for(GraphicsComponent component : this.graphicsComponents)
-		{
 			this.render(renderer, component);
-		}
-		
-		/* DEBUGGING */
 		
 		ArrayList<Line> intersectionLines = new ArrayList<>();
 		
@@ -322,6 +317,32 @@ public class MapLoader extends JPanel
 				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
 			}
 		}
+		
+		if(!nodesToRemove.isEmpty())
+		{
+			for(GameNode node : nodesToRemove)
+			{
+				if(node.getRaycastComponent() != null)
+					this.raycastComponents.remove(node.getRaycastComponent());
+				
+				if(node.getGraphicsComponent() != null)
+					this.graphicsComponents.remove(node.getGraphicsComponent());
+				
+				if(node.getCollisionComponent() != null)
+					this.collisionComponents.remove(node.getCollisionComponent());
+				
+				nodes.remove(node);
+			}
+		}
+		
+		renderer.setColor(Color.GRAY);
+		renderer.fillRect(25, 25, 100, 25);
+		renderer.setColor(Color.RED);
+		renderer.fillRect(25, 25, (int) (this.player.getHealth() * (100 / this.player.getMaxHealth())), 25);
+		
+		checkStatus();
+		
+		/* DEBUGGING */
 		
 		for(GameNode node : nodes)
 		{
@@ -359,43 +380,34 @@ public class MapLoader extends JPanel
 				this.renderLine(renderer, zone.getPointA(), zone.getPointB());
 			}
 		}
-
-		// -> Al final de cada iteración se revisa si es que hay nodos para eliminar
-		if(!nodesToRemove.isEmpty())
-		{
-			for(GameNode node : nodesToRemove)
-			{
-				nodes.remove(node);
-				//		auxNodes.remove(collectable);
-				collisionComponents.remove(node.getCollisionComponent());
-				graphicsComponents.remove(node.getGraphicsComponent());
-			}
-		}
-
-		checkLevelObjective();
-
 	}
 	
 	public void setDownKeys(Set<Integer> downKeys)
 	{
 		this.downKeys = downKeys;
 	}
-
+	
 	// ------> OBJETIVOS DEL JUEGO
 	public void removeCollectable(Collectable collectable)
 	{
-
 		nodesToRemove.add(collectable);
 		collectables.remove(collectable);
-
 	}
-
-	public void checkLevelObjective()
+	
+	public void checkStatus()
 	{
+		if(this.player.getHealth() <= 0)
+		{
+			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+			
+			return;
+		}
+		
 		if(collectables.isEmpty())
 		{
-			// Se completa nivel
 			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+			
+			return;
 		}
 	}
 

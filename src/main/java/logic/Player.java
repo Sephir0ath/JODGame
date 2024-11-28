@@ -2,11 +2,29 @@ package main.java.logic;
 
 public class Player extends GameNode
 {
+	private double health;
+	private double maxHealth;
+	private double invincibleTimer;
+	
 	private double velocity;
 	
-	public Player(Vector2 position)
+	public Player(Vector2 position, double maxHealth)
 	{
 		super(position);
+		
+		this.health = maxHealth;
+		this.maxHealth = maxHealth;
+		this.invincibleTimer = 2;
+	}
+	
+	public double getHealth()
+	{
+		return this.health;
+	}
+	
+	public double getMaxHealth()
+	{
+		return this.maxHealth;
 	}
 	
 	public double getVelocity()
@@ -28,6 +46,9 @@ public class Player extends GameNode
 	@Override
 	public void update(double time)
 	{
+		if(this.invincibleTimer > 0)
+			this.invincibleTimer = Math.max(0, invincibleTimer - time);
+		
 		this.position.x += (velocity * time) * Math.cos(Math.toRadians(this.direction));
 		this.position.y += (velocity * time) * Math.sin(Math.toRadians(this.direction));
 	}
@@ -35,6 +56,12 @@ public class Player extends GameNode
 	@Override
 	public void manageCollision(GameNode node)
 	{
+		if((node instanceof Enemy) && (invincibleTimer == 0))
+		{
+			this.health -= 1;
+			this.invincibleTimer = 2;
+		}
+		
 		double aux = this.velocity;
 		
 		this.velocity = -aux;

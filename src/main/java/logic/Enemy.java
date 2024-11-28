@@ -12,7 +12,7 @@ public class Enemy extends GameNode
 	{
 		super(position);
 		
-		this.velocity = 50;
+		this.velocity = 75;
 		this.movementZone = movementZone;
 		
 		this.setTarget(this.movementZone.chooseLocation(this.position));
@@ -37,13 +37,14 @@ public class Enemy extends GameNode
 	@Override
 	public void update(double time)
 	{
-		if(Math.abs(this.targetDirection - this.direction) > 0.5)
+		if(this.direction != this.targetDirection)
 		{
-			double sign = (this.targetDirection - this.direction) / Math.abs(this.targetDirection - this.direction);
+			double diff = this.targetDirection - this.direction;
+			double sign = diff / Math.abs(diff);
 			
-			this.direction += sign * 0.5;
+			this.direction += sign * 0.75;
 			
-			if(Math.abs(this.targetDirection - this.direction) < 0.5)
+			if(Math.abs(this.targetDirection - this.direction) <= 0.5)
 				this.direction = this.targetDirection;
 			
 			this.getRaycastComponent().setRaysDirection(this.direction);
