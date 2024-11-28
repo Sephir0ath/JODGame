@@ -13,11 +13,11 @@ import java.awt.event.ActionListener;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-public class LevelCompletedJPanel extends JPanel {
+public class LevelLostJPanel extends JPanel {
 	private Font pixelFont;
 	private Image backgroundImage;
 	
-	public LevelCompletedJPanel(Font pixelFont)
+	public LevelLostJPanel(Font pixelFont)
 	{
 		this.setLayout(null);
 		this.pixelFont = pixelFont;
@@ -28,7 +28,7 @@ public class LevelCompletedJPanel extends JPanel {
 			e.printStackTrace();
 		}
 		
-		JLabel message = new JLabel("Level passed!");
+		JLabel message = new JLabel("Level lost");
 		
 		message.setFont(pixelFont);
 		message.setForeground(Color.WHITE);

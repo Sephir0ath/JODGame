@@ -54,12 +54,14 @@ public class PrincipalPanel extends JPanel
 		PlayLevelsJPanel playLevelsJPanel = new PlayLevelsJPanel(pixelFont);
 		CreditsJPanel creditsJPanel = new CreditsJPanel(pixelFont);
 		SettingsJPanel settingsJPanel = new SettingsJPanel(pixelFont);
+		LevelLostJPanel levelLostJPanel = new LevelLostJPanel(pixelFont);
 		LevelCompletedJPanel levelCompletedJPanel = new LevelCompletedJPanel(pixelFont);
 
 		add(mainMenuJPanel, "MainMenu"); // Menú principal
 		add(playLevelsJPanel, "PlayLevels"); // Menú de los niveles pre-hechos
 		add(settingsJPanel, "Settings");
 		add(creditsJPanel, "Credits");
+		add(levelLostJPanel, "LevelLost");
 		add(levelCompletedJPanel, "LevelCompleted");
 
 		// -------- Levels ------------

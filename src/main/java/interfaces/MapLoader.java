@@ -398,7 +398,7 @@ public class MapLoader extends JPanel
 	{
 		if(this.player.getHealth() <= 0)
 		{
-			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+			PrincipalPanel.getInstance().showPanel("LevelLost");
 			
 			return;
 		}
