@@ -1,5 +1,7 @@
 package main.java.logic;
 
+import main.java.interfaces.MapLoader;
+
 public class Enemy extends GameNode
 {
 	private double velocity;
@@ -7,13 +9,24 @@ public class Enemy extends GameNode
 	
 	private Vector2 target;
 	private MovementZone movementZone;
-	
-	public Enemy(Vector2 position, MovementZone movementZone)
+
+	private double health;
+	private double maxHealth;
+	private double invincibleTimer;
+
+	MapLoader mapLoader;
+	public Enemy(Vector2 position, MovementZone movementZone, double maxHealth, MapLoader mapLoader)
 	{
 		super(position);
-		
+
+		this.mapLoader = mapLoader;
+
 		this.velocity = 75;
 		this.movementZone = movementZone;
+
+		this.health = maxHealth;
+		this.maxHealth = maxHealth;
+		this.invincibleTimer = 2;
 		
 		this.setTarget(this.movementZone.chooseLocation(this.position));
 	}
@@ -22,7 +35,17 @@ public class Enemy extends GameNode
 	{
 		return this.movementZone;
 	}
-	
+
+	public double getHealth()
+	{
+		return this.health;
+	}
+
+	public double getMaxHealth()
+	{
+		return this.maxHealth;
+	}
+
 	public void setTarget(Vector2 target)
 	{
 		Vector2 directionVector = Vector2.subtract(target, this.position);
@@ -37,6 +60,9 @@ public class Enemy extends GameNode
 	@Override
 	public void update(double time)
 	{
+		if(this.invincibleTimer > 0)
+			this.invincibleTimer = Math.max(0, invincibleTimer - time);
+
 		if(this.direction != this.targetDirection)
 		{
 			double diff = this.targetDirection - this.direction;
@@ -63,6 +89,17 @@ public class Enemy extends GameNode
 	@Override
 	public void manageCollision(GameNode node)
 	{
+		if((node instanceof Player || node instanceof Bullet) && (invincibleTimer == 0))
+		{
+			this.health -= 1;
+			this.invincibleTimer = 2;
+		}
+
+		if(this.health <= 0)
+		{
+			mapLoader.removeNode(this);
+		}
+
 		double aux = this.velocity;
 		
 		this.velocity = -aux;

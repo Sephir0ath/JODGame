@@ -48,4 +48,16 @@ public class Vector2
 	{
 		return new Vector2(vectorA.x - vectorB.x, vectorA.y - vectorB.y);
 	}
+
+	public void scale(double scale)
+	{
+		this.x *= scale;
+		this.y *= scale;
+	}
+
+	public void add(Vector2 vector)
+	{
+		this.x += vector.x;
+		this.y += vector.y;
+	}
 }

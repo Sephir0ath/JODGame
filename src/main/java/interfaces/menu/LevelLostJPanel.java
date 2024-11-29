@@ -36,12 +36,12 @@ public class LevelLostJPanel extends JPanel {
 		message.setVerticalAlignment(JLabel.CENTER);
 		message.setHorizontalAlignment(JLabel.CENTER);
 		
-		message.setBounds(main.java.interfaces.Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/8, 400, 50);
+		message.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/8, 400, 50);
 		
 		add(message);
 		
 		JButton menuButton = createButton("Return to menu", this.pixelFont);
-		menuButton.setBounds(main.java.interfaces.Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
+		menuButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
 		menuButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -51,7 +51,7 @@ public class LevelLostJPanel extends JPanel {
 		add(menuButton);
 		
 		JButton levelsButton = createButton("Play another level", this.pixelFont);
-		levelsButton.setBounds(main.java.interfaces.Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
+		levelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
 		levelsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

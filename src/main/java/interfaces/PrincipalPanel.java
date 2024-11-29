@@ -1,7 +1,6 @@
 package main.java.interfaces;
 
 import main.java.interfaces.menu.*;
-import main.java.logic.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

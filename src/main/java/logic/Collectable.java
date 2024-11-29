@@ -18,7 +18,7 @@ public class Collectable extends GameNode{
 	@Override
 	public void manageCollision(GameNode node) {
 		if(node instanceof Player)
-			mapLoader.removeCollectable(this);
+			mapLoader.removeNode(this);
 	}
 	
 	@Override

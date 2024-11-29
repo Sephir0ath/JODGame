@@ -50,14 +50,23 @@ public class MapLoader extends JPanel
 	private final Image textureWall = new ImageIcon(this.getClass().getClassLoader().getResource("wall.png")).getImage();
 	private final Image textureEnemy = new ImageIcon(this.getClass().getClassLoader().getResource("enemy.png")).getImage();
 	private final Image texturePlayer = new ImageIcon(this.getClass().getClassLoader().getResource("player.png")).getImage();
-	private final Image textureCollectable = new ImageIcon(this.getClass().getClassLoader().getResource("burguer.png")).getImage();
+	private final Image textureBullet = new ImageIcon(this.getClass().getClassLoader().getResource("bullet.png")).getImage();
+
+	private final ArrayList<Image> texturesCollectables = new ArrayList<>();
 
 	private static final double UPDATE_TIME = 0.016;
 
-
+	private long lastShotTime = 0;
 	public MapLoader(String file)
 	{
 		this.setBackground(Color.BLACK);
+
+		for(int i = 1;i <= 5;i++)
+		{
+			texturesCollectables.add(
+				new ImageIcon(this.getClass().getClassLoader().getResource("collectable" + i + ".png")).getImage()
+			);
+		}
 		
 		this.downKeys = new HashSet<>();
 		this.nodes = new ArrayList<>();
@@ -175,7 +184,7 @@ public class MapLoader extends JPanel
 							}
 							
 							type = 2;
-							node = new Enemy(position, movementZone);
+							node = new Enemy(position, movementZone, 1, this);
 							
 							raycastComponent = new RaycastComponent(node, position);
 							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(32, 32));
@@ -185,9 +194,11 @@ public class MapLoader extends JPanel
 						case '4':
 						{
 							type = 4;
+
 							node = new Collectable(position, this);
-							
-							graphicsComponent = new GraphicsComponent(node, textureCollectable, new Vector2(32, 32));
+
+							int randIndex = (int) (Math.random() * 5);
+							graphicsComponent = new GraphicsComponent(node, texturesCollectables.get(randIndex), new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
 							
 							collectables.add((Collectable) node);
@@ -259,6 +270,13 @@ public class MapLoader extends JPanel
 			
 			else
 				this.player.setVelocity(0);
+
+			// -------> BALAZO
+			if(this.downKeys.contains(KeyEvent.VK_SPACE))
+			{
+				shootBullet(this.player);
+			}
+
 		}
 		
 		renderer.drawImage(textureBackground, 0, 0, null);
@@ -388,10 +406,15 @@ public class MapLoader extends JPanel
 	}
 	
 	// ------> OBJETIVOS DEL JUEGO
-	public void removeCollectable(Collectable collectable)
+	public void removeNode(GameNode node)
 	{
-		nodesToRemove.add(collectable);
-		collectables.remove(collectable);
+		nodesToRemove.add(node);
+
+		if(node instanceof Collectable)
+		{
+			collectables.remove(node);
+		}
+
 	}
 	
 	public void checkStatus()
@@ -409,6 +432,40 @@ public class MapLoader extends JPanel
 			
 			return;
 		}
+	}
+
+	private void shootBullet(GameNode shooterNode)
+	{
+		long currentTime = System.currentTimeMillis();
+		if(currentTime - lastShotTime < 500)
+		{
+			return;
+		}
+
+		lastShotTime = currentTime;
+
+		double direction = Math.toRadians(shooterNode.getDirection());
+		Vector2 offset = new Vector2(Math.cos(direction), Math.sin(direction));
+
+		CollisionComponent shooterCollision = shooterNode.getCollisionComponent();
+		double offsetMagnitude = Math.max(shooterCollision.getDims().x, shooterCollision.getDims().y) / 2 + 21;
+		offset.scale(offsetMagnitude);
+
+		Vector2 bulletPosition = new Vector2(shooterNode.getPosition());
+		bulletPosition.add(offset);
+
+		Bullet bullet = new Bullet(bulletPosition, shooterNode.getDirection(), this);
+
+		GraphicsComponent graphicsComponent = new GraphicsComponent(bullet, textureBullet, new Vector2(20,20));
+		CollisionComponent collisionComponent = new CollisionComponent(bullet, new Vector2(20,20));
+
+		bullet.setGraphicsComponent(graphicsComponent);
+		bullet.setCollisionComponent(collisionComponent);
+
+		this.nodes.add(bullet);
+		this.graphicsComponents.add(bullet.getGraphicsComponent());
+		this.collisionComponents.add(bullet.getCollisionComponent());
+
 	}
 
 
