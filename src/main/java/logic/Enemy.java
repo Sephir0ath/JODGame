@@ -21,7 +21,7 @@ public class Enemy extends GameNode
 
 		this.mapLoader = mapLoader;
 
-		this.velocity = 75;
+		this.velocity = 100;
 		this.movementZone = movementZone;
 
 		this.health = maxHealth;
@@ -89,7 +89,7 @@ public class Enemy extends GameNode
 	@Override
 	public void manageCollision(GameNode node)
 	{
-		if((node instanceof Player || node instanceof Bullet) && (invincibleTimer == 0))
+		if((node instanceof Bullet) && (invincibleTimer == 0))
 		{
 			this.health -= 1;
 			this.invincibleTimer = 2;
