@@ -35,7 +35,7 @@ public class InputManager implements KeyListener
 		if(event.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
 			this.owner.showPanel("MainMenu");
-			
+			SoundPlayer.getInstance().stop();
 			return;
 		}
 		

@@ -1,6 +1,7 @@
 package main.java.interfaces.menu;
 
 import main.java.interfaces.PrincipalPanel;
+import main.java.interfaces.SoundPlayer;
 import main.java.interfaces.Window;
 
 import java.io.File;
@@ -46,6 +47,7 @@ public class LevelLostJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("MainMenu");
+				SoundPlayer.getInstance().stop();
 			}
 		});
 		add(menuButton);
@@ -56,6 +58,7 @@ public class LevelLostJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("PlayLevels");
+				SoundPlayer.getInstance().stop();
 			}
 		});
 		
