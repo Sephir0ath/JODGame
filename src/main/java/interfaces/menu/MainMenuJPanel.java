@@ -1,5 +1,6 @@
 package main.java.interfaces.menu;
 
+import main.java.interfaces.SoundPlayer;
 import main.java.interfaces.Window;
 import main.java.interfaces.PrincipalPanel;
 
@@ -21,13 +22,16 @@ public class MainMenuJPanel extends JPanel {
 	private Image backgroundImage;
 	private Image playerImage;
 	private Image enemyImage;
-	
+	private static SoundPlayer mainMusic;
+
 	public MainMenuJPanel(Font pixelFont) {
 		setLayout(null);
+		mainMusic = new SoundPlayer();
 		
 		this.setBackground(Color.BLACK);
 		this.pixelFont = pixelFont;
-		
+		mainMusic.play("src/main/resources/MusicaMain.wav");
+
 		try {
 			backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
 			playerImage = ImageIO.read(new File("src/main/resources/player-menu.png"));
@@ -42,7 +46,9 @@ public class MainMenuJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("PlayLevels");
+				mainMusic.stop();
 			}
+
 		});
 		
 		add(playLevelsButton);
@@ -53,6 +59,7 @@ public class MainMenuJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
+
 			}
 		});
 		
@@ -64,6 +71,7 @@ public class MainMenuJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("Settings");
+				mainMusic.stop();
 			}
 		});
 		add(settingsButton);
@@ -98,5 +106,10 @@ public class MainMenuJPanel extends JPanel {
 
 		if(enemyImage != null)
 			g.drawImage(enemyImage, Window.getInstance().getWidth()/2, Window.getInstance().getHeight()/4 + 200, 200, 200,null);
+	}
+
+	public static void playMusic(){
+		mainMusic.play("src/main/resources/MusicaMain.wav");
+		mainMusic.loop();
 	}
 }

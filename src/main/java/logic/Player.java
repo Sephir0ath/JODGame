@@ -1,6 +1,7 @@
 package main.java.logic;
 
 import main.java.interfaces.MapLoader;
+import main.java.interfaces.SoundPlayer;
 
 public class Player extends GameNode
 {
@@ -59,10 +60,11 @@ public class Player extends GameNode
 
 	public void dash()
 	{
+		SoundPlayer dashPlayer = new SoundPlayer();
 		if (isDashing || System.currentTimeMillis() - lastDashTime < dashCooldownTime) {
 			return;
 		}
-
+		dashPlayer.play("src/main/resources/MusicaTP.wav");
 		isDashing = true;
 		lastDashTime = System.currentTimeMillis();
 

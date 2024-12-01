@@ -1,5 +1,8 @@
 package main.java.interfaces;
 
+import main.java.interfaces.menu.MainMenuJPanel;
+import main.java.interfaces.menu.PlayLevelsJPanel;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -35,7 +38,10 @@ public class InputManager implements KeyListener
 		if(event.getKeyCode() == KeyEvent.VK_ESCAPE)
 		{
 			this.owner.showPanel("MainMenu");
-			SoundPlayer.getInstance().stop();
+
+			PlayLevelsJPanel.stopMusic();
+
+			MainMenuJPanel.playMusic();
 			return;
 		}
 		

@@ -47,7 +47,9 @@ public class LevelLostJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("MainMenu");
-				SoundPlayer.getInstance().stop();
+				PlayLevelsJPanel.stopMusic();
+				MainMenuJPanel.playMusic();
+
 			}
 		});
 		add(menuButton);
@@ -58,7 +60,7 @@ public class LevelLostJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("PlayLevels");
-				SoundPlayer.getInstance().stop();
+				PlayLevelsJPanel.stopMusic();
 			}
 		});
 		

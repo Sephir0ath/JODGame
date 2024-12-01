@@ -1,6 +1,8 @@
 package main.java.interfaces.menu;
 
+import com.sun.tools.javac.Main;
 import main.java.interfaces.PrincipalPanel;
+import main.java.interfaces.SoundPlayer;
 import main.java.interfaces.Window;
 
 import java.io.File;
@@ -16,10 +18,11 @@ import javax.swing.*;
 public class SettingsJPanel extends JPanel {
 	private Font pixelFont;
 	private Image backgroundImage;
-	
+
 	public SettingsJPanel(Font pixelFont) {
 		this.setLayout(null);
 		this.pixelFont = pixelFont;
+		SoundPlayer credits = new SoundPlayer();
 		
 		try {
 			backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
@@ -33,12 +36,17 @@ public class SettingsJPanel extends JPanel {
 		creditsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("Credits");
+				credits.play("src/main/resources/MusicaCreditos.wav");
+				credits.loop();
 			}
 		});
 		
 		backButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("MainMenu");
+				credits.stop();
+				MainMenuJPanel.playMusic();
+
 			}
 		});
 		

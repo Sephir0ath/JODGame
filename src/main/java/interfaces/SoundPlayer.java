@@ -10,11 +10,10 @@ import javax.sound.sampled.FloatControl;
 import java.io.IOException;
 
 public class SoundPlayer {
-    private static SoundPlayer instance;
     private Clip clip;
     File soundFile;
     public SoundPlayer() {
-        instance = this;
+
 
     }
 
@@ -35,7 +34,7 @@ public class SoundPlayer {
     }
 
     public void stop() {
-        if (clip != null && clip.isRunning()) {
+        while (clip != null && clip.isRunning()) {
             clip.stop();
         }
     }
@@ -65,11 +64,4 @@ public class SoundPlayer {
         soundFile = new File(path);
     }
 
-    public static SoundPlayer getInstance()
-    {
-        if(instance == null)
-            instance = new SoundPlayer();
-
-        return instance;
-    }
 }

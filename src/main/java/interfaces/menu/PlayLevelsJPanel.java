@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class PlayLevelsJPanel extends JPanel {
 	private Font pixelFont;
-	private SoundPlayer soundPlayer;
+	private static SoundPlayer soundPlayer;
 	
 	public PlayLevelsJPanel(Font pixelFont) {
 		this.setLayout(new GridLayout(2, 3));
@@ -53,7 +53,13 @@ public class PlayLevelsJPanel extends JPanel {
 		}
 		
 		JButton goBackButton = createButton("Back", this.pixelFont);
-		goBackButton.addActionListener(e -> PrincipalPanel.getInstance().showPanel("MainMenu"));
+		goBackButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PrincipalPanel.getInstance().showPanel("MainMenu");
+				MainMenuJPanel.playMusic();
+			}
+		});
 		this.add(goBackButton);
 	}
 
@@ -67,5 +73,9 @@ public class PlayLevelsJPanel extends JPanel {
 		button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 7));
 		
 		return button;
+	}
+
+	public static void stopMusic(){
+		soundPlayer.stop();
 	}
 }

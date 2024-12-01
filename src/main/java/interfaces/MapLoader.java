@@ -1,5 +1,6 @@
 package main.java.interfaces;
 
+import main.java.interfaces.menu.PlayLevelsJPanel;
 import main.java.logic.*;
 
 import java.awt.*;
@@ -280,6 +281,7 @@ public class MapLoader extends JPanel
 			if(this.downKeys.contains(KeyEvent.VK_SPACE))
 			{
 				shootBullet(this.player);
+
 			}
 
 			// -------> DASHEO
@@ -378,7 +380,12 @@ public class MapLoader extends JPanel
 		{
 			if(enemy.canSeePlayer(this.player))
 			{
+				SoundPlayer alertSoundPlayer = new SoundPlayer();
+				//alertSoundPlayer.play("src/main/resources/MusicaOui.wav");
+				//Tiempo 1 sec
+				//alertSoundPlayer.play("src/main/resources/MusicaTuDebesMorir.wav");
 				shootBullet(enemy);
+
 				//enemy.setVelocity(500);
 			} else {
 				//enemy.setVelocity(100);
@@ -469,11 +476,14 @@ public class MapLoader extends JPanel
 
 	public void removeNode(GameNode node)
 	{
+		SoundPlayer removeNode = new SoundPlayer();
 		nodesToRemove.add(node);
 
 		if(node instanceof Collectable)
 		{
 			collectables.remove(node);
+			removeNode.play("src/main/resources/MusicaComida.wav");
+
 		}
 
 		if(node instanceof Enemy)
@@ -491,39 +501,40 @@ public class MapLoader extends JPanel
 	// ------> OBJETIVOS DEL JUEGO
 	public void checkStatus()
 	{
+		SoundPlayer gameStatus = new SoundPlayer();
 		if(this.player.getHealth() <= 0)
 		{
 			PrincipalPanel.getInstance().showPanel("LevelLost");
+			PlayLevelsJPanel.stopMusic();
 			
 			return;
 		}
 		
-		if(collectables.isEmpty())
+		if(collectables.isEmpty() || enemies.isEmpty())
 		{
 			PrincipalPanel.getInstance().showPanel("LevelCompleted");
-			
+			gameStatus.play("src/main/resources/MusicaVictoria.wav");
+			PlayLevelsJPanel.stopMusic();
 			return;
 		}
 
-		if(enemies.isEmpty())
-		{
-			PrincipalPanel.getInstance().showPanel("LevelCompleted");
-		}
 	}
 
 	public void shootBullet(GameNode shooterNode)
 	{
+		SoundPlayer bulletPlayer = new SoundPlayer();
 		long currentTime = System.currentTimeMillis();
 
 		if(shooterNode instanceof Enemy)
 		{
 			Enemy enemy = (Enemy) shooterNode;
 			if(currentTime - enemy.getLastShotTime() < 1500) return;
-
+			bulletPlayer.play("src/main/resources/MusicaPiu.wav");
 			enemy.setLastShotTime(currentTime);
 		} else {
 
 			if(currentTime - lastShotTime < 1000) return;
+			bulletPlayer.play("src/main/resources/MusicaPiu.wav");
 
 			lastShotTime = currentTime;
 		}
