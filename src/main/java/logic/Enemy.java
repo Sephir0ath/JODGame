@@ -19,6 +19,8 @@ public class Enemy extends GameNode
 	MapLoader mapLoader;
 
 	private long lastShotTime = 0;
+
+	private boolean alertSoundPlayed = false;
 	public Enemy(Vector2 position, MovementZone movementZone, double maxHealth, MapLoader mapLoader)
 	{
 		super(position);
@@ -80,6 +82,16 @@ public class Enemy extends GameNode
 	{
 		return this.getRaycastComponent().intersects(player.getCollisionComponent());
 	}
+
+	public boolean isAlertSoundPlayed()
+	{
+		return this.alertSoundPlayed;
+	}
+
+	public void setAlertSoundPlayed(boolean played)
+	{
+		this.alertSoundPlayed = played;
+	}
 	
 	@Override
 	public void update(double time)
@@ -139,7 +151,6 @@ public class Enemy extends GameNode
 		if(node instanceof Player)
 		{
 			this.setTarget(new Vector2(node.getPosition()));
-			//mapLoader.shootBullet(this);
 		}
 
 	}

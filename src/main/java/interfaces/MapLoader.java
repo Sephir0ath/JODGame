@@ -1,6 +1,7 @@
 package main.java.interfaces;
 
 import main.java.interfaces.menu.LevelCompletedJPanel;
+import main.java.interfaces.menu.LevelLostJPanel;
 import main.java.interfaces.menu.PlayLevelsJPanel;
 import main.java.logic.*;
 
@@ -379,20 +380,26 @@ public class MapLoader extends JPanel
 
 		}
 
-		// -> DISPAROS DE ENEMIGO
+		// -> DISPAROS DE ENEMIGO Y DETECCION
 		for(Enemy enemy : enemies)
 		{
 			if(enemy.canSeePlayer(this.player))
 			{
-				SoundPlayer alertSoundPlayer = new SoundPlayer();
-				//alertSoundPlayer.play("src/main/resources/MusicaOui.wav");
-				//Tiempo 1 sec
-				//alertSoundPlayer.play("src/main/resources/MusicaTuDebesMorir.wav");
+				if (!enemy.isAlertSoundPlayed()) {
+					double soundChoice = Math.random();
+					SoundPlayer alertSoundPlayer = new SoundPlayer();
+					if(soundChoice < 0.5)
+					{
+						alertSoundPlayer.play("src/main/resources/MusicaTuDebesMorir.wav");
+					} else {
+						alertSoundPlayer.play("src/main/resources/MusicaOui.wav");
+					}
+
+					enemy.setAlertSoundPlayed(true);
+				}
 				shootBullet(enemy);
 
 				//enemy.setVelocity(500);
-			} else {
-				//enemy.setVelocity(100);
 			}
 		}
 
@@ -509,6 +516,7 @@ public class MapLoader extends JPanel
 		if(this.player.getHealth() <= 0)
 		{
 			PrincipalPanel.getInstance().showPanel("LevelLost");
+			LevelLostJPanel.setMapIndex(this.mapIndex);
 			PlayLevelsJPanel.stopMusic();
 			
 			return;
