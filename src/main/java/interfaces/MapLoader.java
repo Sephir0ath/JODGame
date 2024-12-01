@@ -33,8 +33,10 @@ public class MapLoader extends JPanel
 	private ArrayList<CollisionComponent> collisionComponents;
 
 	private ArrayList<Collectable> collectables;
+	private ArrayList<Enemy> enemies;
 
 	private ArrayList<GameNode> nodesToRemove;
+	private ArrayList<GameNode> nodesToAdd;
 
 	private ArrayList<SimpleEntry<GameNode, Integer>> auxNodes;
 
@@ -76,8 +78,10 @@ public class MapLoader extends JPanel
 		this.collisionComponents = new ArrayList<>();
 
 		this.collectables = new ArrayList<>();
+		this.enemies = new ArrayList<>();
 
 		this.nodesToRemove = new ArrayList<>();
+		this.nodesToAdd = new ArrayList<>();
 		
 		int rowCount = 0;
 		int colCount = 0;
@@ -148,7 +152,7 @@ public class MapLoader extends JPanel
 								continue;
 							
 							type = 3;
-							node = new Player(position, 5);
+							node = new Player(position, 5, this);
 							
 							graphicsComponent = new GraphicsComponent(node, texturePlayer, new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
@@ -184,8 +188,9 @@ public class MapLoader extends JPanel
 							}
 							
 							type = 2;
-							node = new Enemy(position, movementZone, 1, this);
-							
+							node = new Enemy(position, movementZone, 5, this);
+							enemies.add((Enemy) node);
+
 							raycastComponent = new RaycastComponent(node, position);
 							graphicsComponent = new GraphicsComponent(node, textureEnemy, new Vector2(32, 32));
 							collisionComponent = new CollisionComponent(node, new Vector2(32, 32));
@@ -277,6 +282,12 @@ public class MapLoader extends JPanel
 				shootBullet(this.player);
 			}
 
+			// -------> DASHEO
+			if(this.downKeys.contains(KeyEvent.VK_SHIFT))
+			{
+				this.player.dash();
+			}
+
 		}
 		
 		renderer.drawImage(textureBackground, 0, 0, null);
@@ -335,77 +346,127 @@ public class MapLoader extends JPanel
 				this.renderLine(renderer, segment.getPointA(), segment.getPointB());
 			}
 		}
-		
-		if(!nodesToRemove.isEmpty())
-		{
-			for(GameNode node : nodesToRemove)
-			{
-				if(node.getRaycastComponent() != null)
-					this.raycastComponents.remove(node.getRaycastComponent());
-				
-				if(node.getGraphicsComponent() != null)
-					this.graphicsComponents.remove(node.getGraphicsComponent());
-				
-				if(node.getCollisionComponent() != null)
-					this.collisionComponents.remove(node.getCollisionComponent());
-				
-				nodes.remove(node);
-			}
-		}
-		
+
+
+
+		// -> BARRAS DE VIDA
 		renderer.setColor(Color.GRAY);
 		renderer.fillRect(25, 25, 100, 25);
-		renderer.setColor(Color.RED);
+		renderer.setColor(Color.GREEN);
 		renderer.fillRect(25, 25, (int) (this.player.getHealth() * (100 / this.player.getMaxHealth())), 25);
-		
+
+		for(Enemy enemy : enemies)
+		{
+			Vector2 enemyPosition = this.center(enemy.getPosition());
+
+			int barWidth = 25;
+			int barHeight = 5;
+			int offsetY = 20;
+
+			int healthPercentage = (int) ((enemy.getHealth() / enemy.getMaxHealth()) * barWidth);
+
+			renderer.setColor(Color.GRAY);
+			renderer.fillRect((int) enemyPosition.x - (barWidth / 2), (int) enemyPosition.y + offsetY, barWidth, barHeight);
+
+			renderer.setColor(Color.RED);
+			renderer.fillRect((int) enemyPosition.x - (barWidth / 2), (int) enemyPosition.y + offsetY, healthPercentage, barHeight);
+
+		}
+
+		// -> DISPAROS DE ENEMIGO
+		for(Enemy enemy : enemies)
+		{
+			if(enemy.canSeePlayer(this.player))
+			{
+				shootBullet(enemy);
+				//enemy.setVelocity(250);
+			} else {
+				//enemy.setVelocity(100);
+			}
+		}
+
+		// -> OBJETIVOS DE JUEGO
 		checkStatus();
 		
 		/* DEBUGGING */
 		
-		for(GameNode node : nodes)
-		{
-			CollisionComponent collisionComponent = node.getCollisionComponent();
-			
-			if(collisionComponent == null)
-				continue;
-			
-			renderer.setColor(Color.CYAN);
-			this.renderBox(renderer, node.getPosition(), collisionComponent.getDims());
-		}
-		
-		for(GameNode node : nodes)
-		{
-			if(!(node instanceof Enemy))
-				continue;
-			
-			Enemy enemy = (Enemy) node;
-			
-			MovementZone movementZone = enemy.getMovementZone();
-			
-			if(movementZone instanceof BoxMovementZone)
-			{
-				BoxMovementZone zone = (BoxMovementZone) movementZone;
-				
-				renderer.setColor(Color.GREEN);
-				this.renderBox(renderer, zone.getPosition(), zone.getDims());
-			}
-			
-			if(movementZone instanceof LineMovementZone)
-			{
-				LineMovementZone zone = (LineMovementZone) movementZone;
-				
-				renderer.setColor(Color.GREEN);
-				this.renderLine(renderer, zone.getPointA(), zone.getPointB());
-			}
-		}
+//		for(GameNode node : nodes)
+//		{
+//			CollisionComponent collisionComponent = node.getCollisionComponent();
+//
+//			if(collisionComponent == null)
+//				continue;
+//
+//			renderer.setColor(Color.CYAN);
+//			this.renderBox(renderer, node.getPosition(), collisionComponent.getDims());
+//		}
+//
+//		for(GameNode node : nodes)
+//		{
+//			if(!(node instanceof Enemy))
+//				continue;
+//
+//			Enemy enemy = (Enemy) node;
+//
+//			MovementZone movementZone = enemy.getMovementZone();
+//
+//			if(movementZone instanceof BoxMovementZone)
+//			{
+//				BoxMovementZone zone = (BoxMovementZone) movementZone;
+//
+//				renderer.setColor(Color.GREEN);
+//				this.renderBox(renderer, zone.getPosition(), zone.getDims());
+//			}
+//
+//			if(movementZone instanceof LineMovementZone)
+//			{
+//				LineMovementZone zone = (LineMovementZone) movementZone;
+//
+//				renderer.setColor(Color.GREEN);
+//				this.renderLine(renderer, zone.getPointA(), zone.getPointB());
+//			}
+//		}
+
+
+
+		// -> AGREGAR/REMOVER NODOS
+		processPendingNodes();
 	}
 	
 	public void setDownKeys(Set<Integer> downKeys)
 	{
 		this.downKeys = downKeys;
 	}
-	
-	// ------> OBJETIVOS DEL JUEGO
+
+	public void processPendingNodes()
+	{
+		for (GameNode node : nodesToAdd) {
+
+			if (node.getRaycastComponent() != null)
+				this.raycastComponents.add(node.getRaycastComponent());
+			if (node.getGraphicsComponent() != null)
+				this.graphicsComponents.add(node.getGraphicsComponent());
+			if (node.getCollisionComponent() != null)
+				this.collisionComponents.add(node.getCollisionComponent());
+			nodes.add(node);
+
+		}
+		nodesToAdd.clear();
+
+		for (GameNode node : nodesToRemove) {
+
+			if (node.getRaycastComponent() != null)
+				this.raycastComponents.remove(node.getRaycastComponent());
+			if (node.getGraphicsComponent() != null)
+				this.graphicsComponents.remove(node.getGraphicsComponent());
+			if (node.getCollisionComponent() != null)
+				this.collisionComponents.remove(node.getCollisionComponent());
+			nodes.remove(node);
+
+		}
+		nodesToRemove.clear();
+	}
+
 	public void removeNode(GameNode node)
 	{
 		nodesToRemove.add(node);
@@ -415,8 +476,19 @@ public class MapLoader extends JPanel
 			collectables.remove(node);
 		}
 
+		if(node instanceof Enemy)
+		{
+			enemies.remove(node);
+		}
+
 	}
-	
+
+	public void addNode(GameNode node)
+	{
+		nodesToAdd.add(node);
+	}
+
+	// ------> OBJETIVOS DEL JUEGO
 	public void checkStatus()
 	{
 		if(this.player.getHealth() <= 0)
@@ -432,17 +504,29 @@ public class MapLoader extends JPanel
 			
 			return;
 		}
+
+		if(enemies.isEmpty())
+		{
+			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+		}
 	}
 
-	private void shootBullet(GameNode shooterNode)
+	public void shootBullet(GameNode shooterNode)
 	{
 		long currentTime = System.currentTimeMillis();
-		if(currentTime - lastShotTime < 500)
-		{
-			return;
-		}
 
-		lastShotTime = currentTime;
+		if(shooterNode instanceof Enemy)
+		{
+			Enemy enemy = (Enemy) shooterNode;
+			if(currentTime - enemy.getLastShotTime() < 1500) return;
+
+			enemy.setLastShotTime(currentTime);
+		} else {
+
+			if(currentTime - lastShotTime < 1000) return;
+
+			lastShotTime = currentTime;
+		}
 
 		double direction = Math.toRadians(shooterNode.getDirection());
 		Vector2 offset = new Vector2(Math.cos(direction), Math.sin(direction));
@@ -462,9 +546,10 @@ public class MapLoader extends JPanel
 		bullet.setGraphicsComponent(graphicsComponent);
 		bullet.setCollisionComponent(collisionComponent);
 
-		this.nodes.add(bullet);
-		this.graphicsComponents.add(bullet.getGraphicsComponent());
-		this.collisionComponents.add(bullet.getCollisionComponent());
+		nodesToAdd.add(bullet);
+//		this.nodes.add(bullet);
+//		this.graphicsComponents.add(bullet.getGraphicsComponent());
+//		this.collisionComponents.add(bullet.getCollisionComponent());
 
 	}
 

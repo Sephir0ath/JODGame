@@ -2,6 +2,8 @@ package main.java.logic;
 
 import main.java.interfaces.MapLoader;
 
+import java.util.concurrent.ConcurrentLinkedDeque;
+
 public class Enemy extends GameNode
 {
 	private double velocity;
@@ -15,6 +17,8 @@ public class Enemy extends GameNode
 	private double invincibleTimer;
 
 	MapLoader mapLoader;
+
+	private long lastShotTime = 0;
 	public Enemy(Vector2 position, MovementZone movementZone, double maxHealth, MapLoader mapLoader)
 	{
 		super(position);
@@ -56,6 +60,26 @@ public class Enemy extends GameNode
 		if(directionVector.y < 0)
 			this.targetDirection = 360 - this.targetDirection;
 	}
+
+	public long getLastShotTime()
+	{
+		return this.lastShotTime;
+	}
+
+	public void setLastShotTime(long lastShotTime)
+	{
+		this.lastShotTime = lastShotTime;
+	}
+
+	public void setVelocity(double velocity)
+	{
+		this.velocity = velocity;
+	}
+
+	public boolean canSeePlayer(Player player)
+	{
+		return this.getRaycastComponent().intersects(player.getCollisionComponent());
+	}
 	
 	@Override
 	public void update(double time)
@@ -91,8 +115,8 @@ public class Enemy extends GameNode
 	{
 		if((node instanceof Bullet) && (invincibleTimer == 0))
 		{
-			this.health -= 1;
-			this.invincibleTimer = 2;
+			this.health -= 3;
+			this.invincibleTimer = 1;
 		}
 
 		if(this.health <= 0)
@@ -113,6 +137,10 @@ public class Enemy extends GameNode
 	public void manageIntersection(GameNode node)
 	{
 		if(node instanceof Player)
+		{
 			this.setTarget(new Vector2(node.getPosition()));
+			//mapLoader.shootBullet(this);
+		}
+
 	}
 }
