@@ -11,6 +11,8 @@ public class TrailSegment extends GameNode{
     private double fadeSpeed;
 
 
+
+
     MapLoader mapLoader;
     public TrailSegment(Vector2 position, double direction, double lifetime, MapLoader mapLoader)
     {
@@ -21,6 +23,11 @@ public class TrailSegment extends GameNode{
         this.opacity = 1;
 
         this.mapLoader = mapLoader;
+    }
+
+    public double getOpacity()
+    {
+        return opacity;
     }
 
     @Override

@@ -332,9 +332,9 @@ public class MapLoader extends JPanel
 		
 		for(CollisionComponent component : collisionComponents)
 		{
-			if(component.getOwner() instanceof Enemy)
+			if(!(component.getOwner() instanceof Player) && !(component.getOwner() instanceof Wall))
 				continue;
-			
+
 			intersectionLines.addAll(component.getOutline());
 		}
 		
@@ -379,7 +379,7 @@ public class MapLoader extends JPanel
 			if(enemy.canSeePlayer(this.player))
 			{
 				shootBullet(enemy);
-				//enemy.setVelocity(250);
+				//enemy.setVelocity(500);
 			} else {
 				//enemy.setVelocity(100);
 			}
@@ -566,10 +566,19 @@ public class MapLoader extends JPanel
 		int posY = (int) (position.y - (sizeY / 2));
 		
 		Graphics2D renderer2 = (Graphics2D) renderer.create();
+
+		if(graphicsComponent.getOwner() instanceof TrailSegment)
+		{
+			TrailSegment trailSegment = (TrailSegment) graphicsComponent.getOwner();
+			float alpha = (float) trailSegment.getOpacity();
+			renderer2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+		}
 		
 		renderer2.rotate(Math.toRadians(direction), posX + (sizeX / 2), posY + (sizeY / 2));
 		
 		renderer2.drawImage(graphicsComponent.getTexture(), posX, posY, (int) sizeX, (int) sizeY, null);
+
+		renderer2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 		renderer2.dispose();
 	}
 	
