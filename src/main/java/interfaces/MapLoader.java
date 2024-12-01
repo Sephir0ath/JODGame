@@ -1,5 +1,6 @@
 package main.java.interfaces;
 
+import main.java.interfaces.menu.LevelCompletedJPanel;
 import main.java.interfaces.menu.PlayLevelsJPanel;
 import main.java.logic.*;
 
@@ -60,8 +61,11 @@ public class MapLoader extends JPanel
 	private static final double UPDATE_TIME = 0.016;
 
 	private long lastShotTime = 0;
-	public MapLoader(String file)
+
+	private int mapIndex;
+	public MapLoader(String file, int mapIndex)
 	{
+		this.mapIndex = mapIndex;
 		this.setBackground(Color.BLACK);
 
 		for(int i = 1;i <= 5;i++)
@@ -513,6 +517,7 @@ public class MapLoader extends JPanel
 		if(collectables.isEmpty() || enemies.isEmpty())
 		{
 			PrincipalPanel.getInstance().showPanel("LevelCompleted");
+			LevelCompletedJPanel.setMapIndex(this.mapIndex);
 			gameStatus.play("src/main/resources/MusicaVictoria.wav");
 			PlayLevelsJPanel.stopMusic();
 			return;

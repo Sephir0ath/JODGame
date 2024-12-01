@@ -66,7 +66,7 @@ public class PrincipalPanel extends JPanel
 		// -------- Levels ------------
 		for (int i = 0; i < 7; i++)
 		{
-			this.maps.add(new MapLoader("src/main/resources/map-" + i + ".txt"));
+			this.maps.add(new MapLoader("src/main/resources/map-" + i + ".txt", i));
 			
 			this.add(maps.get(i), "map" + i);
 		}
@@ -105,6 +105,18 @@ public class PrincipalPanel extends JPanel
 		
 		else
 			map = null;
+	}
+
+	public void restartCurrentLevel(int mapIndex)
+	{
+
+		MapLoader newMap = new MapLoader("src/main/resources/map-" + mapIndex + ".txt", mapIndex);
+		maps.set(mapIndex, newMap);
+		this.add(newMap, "map" + mapIndex);
+
+		this.add(newMap, "map" + mapIndex);
+		showPanel("map" + mapIndex);
+
 	}
 
 	public static PrincipalPanel getInstance()

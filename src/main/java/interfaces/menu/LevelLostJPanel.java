@@ -17,7 +17,8 @@ import javax.swing.*;
 public class LevelLostJPanel extends JPanel {
 	private Font pixelFont;
 	private Image backgroundImage;
-	
+	private static int currentMapIndex;
+
 	public LevelLostJPanel(Font pixelFont)
 	{
 		this.setLayout(null);
@@ -37,12 +38,12 @@ public class LevelLostJPanel extends JPanel {
 		message.setVerticalAlignment(JLabel.CENTER);
 		message.setHorizontalAlignment(JLabel.CENTER);
 		
-		message.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/8, 400, 50);
+		message.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/10, 400, 50);
 		
 		add(message);
 		
 		JButton menuButton = createButton("Return to menu", this.pixelFont);
-		menuButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
+		menuButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/6, 400, 50);
 		menuButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -53,7 +54,17 @@ public class LevelLostJPanel extends JPanel {
 			}
 		});
 		add(menuButton);
-		
+
+		JButton restartButton = createButton("Restart level", this.pixelFont);
+		restartButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
+		restartButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PrincipalPanel.getInstance().restartCurrentLevel(currentMapIndex);
+			}
+		});
+		add(restartButton);
+
 		JButton levelsButton = createButton("Play another level", this.pixelFont);
 		levelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
 		levelsButton.addActionListener(new ActionListener() {
@@ -78,6 +89,11 @@ public class LevelLostJPanel extends JPanel {
 		button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 7));
 		
 		return button;
+	}
+
+	public static void setMapIndex(int mapIndex)
+	{
+		currentMapIndex = mapIndex;
 	}
 	
 	@Override
