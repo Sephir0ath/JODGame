@@ -1,6 +1,7 @@
 package main.java.interfaces.menu;
 
 import main.java.interfaces.PrincipalPanel;
+import main.java.interfaces.SoundManager;
 import main.java.interfaces.Window;
 
 import java.io.File;
@@ -18,10 +19,13 @@ public class LevelCompletedJPanel extends JPanel {
 	private Image backgroundImage;
 	private static int currentMapIndex;
 
+	SoundManager soundManager;
 	public LevelCompletedJPanel(Font pixelFont)
 	{
 		this.setLayout(null);
 		this.pixelFont = pixelFont;
+
+		soundManager = new SoundManager();
 		
 		try {
 			backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
@@ -57,6 +61,7 @@ public class LevelCompletedJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().restartCurrentLevel(currentMapIndex);
+				soundManager.playLevelMusic(currentMapIndex);
 			}
 		});
 		add(restartButton);
