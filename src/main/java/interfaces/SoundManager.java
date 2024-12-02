@@ -11,12 +11,12 @@ public class SoundManager {
         levelMusicMap = new HashMap<>();
 
 
-        levelMusicMap.put(0, "src/main/resources/MusicaCitaPelea.wav");
+        levelMusicMap.put(0, "src/main/resources/MusicaGlamour.wav");
         levelMusicMap.put(1, "src/main/resources/MusicaCitaPelea.wav");
         levelMusicMap.put(2, "src/main/resources/MusicaChiste.wav");
-        levelMusicMap.put(3, "src/main/resources/MusicaCitaPelea.wav");
+        levelMusicMap.put(3, "src/main/resources/MusicaEspiritu.wav");
         levelMusicMap.put(4, "src/main/resources/MusicaDelCovenant.wav");
-        levelMusicMap.put(5, "src/main/resources/MusicaCitaPelea.wav");
+        levelMusicMap.put(5, "src/main/resources/MusicaNoches.wav");
         levelMusicMap.put(6, "src/main/resources/MusicaDeAtraco.wav");
 
     }
