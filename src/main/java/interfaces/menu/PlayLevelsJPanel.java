@@ -25,24 +25,24 @@ public class PlayLevelsJPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					PrincipalPanel.getInstance().showPanel("map" + level);
-					switch (level){
-						case 1:
-							soundPlayer.play("src/main/resources/MusicaCitaPelea.wav");
-							soundPlayer.loop();
-							break;
-						case 2:
-							soundPlayer.play("src/main/resources/MusicaChiste.wav");
-							soundPlayer.loop();
-							break;
-						case 4:
-							soundPlayer.play("src/main/resources/MusicaDelCovenant.wav");
-							soundPlayer.loop();
-							break;
-						case 6:
-							soundPlayer.play("src/main/resources/MusicaDeAtraco.wav");
-							soundPlayer.loop();
-							break;
-					}
+//					switch (level){
+//						case 1:
+//							soundPlayer.play("src/main/resources/MusicaCitaPelea.wav");
+//							soundPlayer.loop();
+//							break;
+//						case 2:
+//							soundPlayer.play("src/main/resources/MusicaChiste.wav");
+//							soundPlayer.loop();
+//							break;
+//						case 4:
+//							soundPlayer.play("src/main/resources/MusicaDelCovenant.wav");
+//							soundPlayer.loop();
+//							break;
+//						case 6:
+//							soundPlayer.play("src/main/resources/MusicaDeAtraco.wav");
+//							soundPlayer.loop();
+//							break;
+//					}
 
 
 

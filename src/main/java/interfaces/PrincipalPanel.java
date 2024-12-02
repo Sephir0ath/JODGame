@@ -99,12 +99,21 @@ public class PrincipalPanel extends JPanel
 		if(panelName.contains("map"))
 		{
 			int mapID = Character.getNumericValue(panelName.charAt(panelName.length() - 1));
-			
+
+			if(map != null)
+			{
+				map.stopMusic();
+			}
+
 			map = this.maps.get(mapID);
+			map.playMusic();
 		}
 		
 		else
-			map = null;
+			if (map != null) {
+				map.stopMusic();
+				map = null;
+			}
 	}
 
 	public void restartCurrentLevel(int mapIndex)

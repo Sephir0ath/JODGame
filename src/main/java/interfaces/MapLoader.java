@@ -64,10 +64,14 @@ public class MapLoader extends JPanel
 	private long lastShotTime = 0;
 
 	private int mapIndex;
+
+	private SoundManager soundManager;
 	public MapLoader(String file, int mapIndex)
 	{
 		this.mapIndex = mapIndex;
 		this.setBackground(Color.BLACK);
+
+		soundManager = new SoundManager();
 
 		for(int i = 1;i <= 5;i++)
 		{
@@ -640,4 +644,20 @@ public class MapLoader extends JPanel
 		
 		return newPosition;
 	}
+
+	public SoundManager getSoundManager()
+	{
+		return soundManager;
+	}
+
+	public void stopMusic()
+	{
+		soundManager.stopMusic();
+	}
+
+	public void playMusic()
+	{
+		soundManager.playLevelMusic(mapIndex);
+	}
+
 }

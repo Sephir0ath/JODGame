@@ -65,7 +65,7 @@ public class LevelLostJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().restartCurrentLevel(currentMapIndex);
-				soundManager.playLevelMusic(currentMapIndex);
+//				soundManager.playLevelMusic(currentMapIndex);
 			}
 		});
 		add(restartButton);
