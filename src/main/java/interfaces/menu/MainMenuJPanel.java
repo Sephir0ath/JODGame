@@ -22,6 +22,7 @@ public class MainMenuJPanel extends JPanel {
 	private Image backgroundImage;
 	private Image playerImage;
 	private Image enemyImage;
+	private Image menuImage;
 	private static SoundPlayer mainMusic;
 
 	public MainMenuJPanel(Font pixelFont) {
@@ -36,13 +37,14 @@ public class MainMenuJPanel extends JPanel {
 			backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
 			playerImage = ImageIO.read(new File("src/main/resources/player-menu.png"));
 			enemyImage = ImageIO.read(new File("src/main/resources/enemy-menu.png"));
+			menuImage = ImageIO.read(new File("src/main/resources/menu_blanco_espada.png"));
 
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		
 		playLevelsButton = createButton("Play Levels", this.pixelFont);
-		playLevelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/6, 400, 50);
+		playLevelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/3, 400, 50);
 		playLevelsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -67,7 +69,7 @@ public class MainMenuJPanel extends JPanel {
 		add(exitButton);
 		
 		settingsButton = createButton("Settings", this.pixelFont);
-		settingsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/3, 400, 50);
+		settingsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
 		settingsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -102,11 +104,14 @@ public class MainMenuJPanel extends JPanel {
 		if(backgroundImage != null)
 			g.drawImage(backgroundImage, 0, 0, null);
 
+		if(menuImage != null)
+			g.drawImage(menuImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/8, 400, 100, null);
+
 		if(playerImage != null)
-			g.drawImage(playerImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4 + 200, 200, 200, null);
+			g.drawImage(playerImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4 + 300, 200, 200, null);
 
 		if(enemyImage != null)
-			g.drawImage(enemyImage, Window.getInstance().getWidth()/2, Window.getInstance().getHeight()/4 + 200, 200, 200,null);
+			g.drawImage(enemyImage, Window.getInstance().getWidth()/2, Window.getInstance().getHeight()/4 + 300, 200, 200,null);
 	}
 
 	public static void playMusic(){
