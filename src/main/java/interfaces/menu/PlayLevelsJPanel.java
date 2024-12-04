@@ -25,6 +25,7 @@ public class PlayLevelsJPanel extends JPanel {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					PrincipalPanel.getInstance().showPanel("map" + level);
+					MainMenuJPanel.stopMusic();
 //					switch (level){
 //						case 1:
 //							soundPlayer.play("src/main/resources/MusicaCitaPelea.wav");
@@ -57,7 +58,7 @@ public class PlayLevelsJPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("MainMenu");
-				MainMenuJPanel.playMusic();
+//				MainMenuJPanel.playMusic();
 			}
 		});
 		this.add(goBackButton);

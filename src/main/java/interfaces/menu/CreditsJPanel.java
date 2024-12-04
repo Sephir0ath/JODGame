@@ -18,9 +18,9 @@ public class CreditsJPanel extends JPanel {
 	private Image backgroundImage;
 	
 	public CreditsJPanel(Font pixelFont) {
-		this.setLayout(null);
-		this.pixelFont = pixelFont;
-		
+			this.setLayout(null);
+			this.pixelFont = pixelFont;
+
 		try {
 			backgroundImage = ImageIO.read(new File("src/main/resources/background.png"));
 		} catch(IOException e) {

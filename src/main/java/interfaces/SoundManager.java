@@ -10,7 +10,6 @@ public class SoundManager {
         soundPlayer = new SoundPlayer();
         levelMusicMap = new HashMap<>();
 
-
         levelMusicMap.put(0, "src/main/resources/MusicaGlamour.wav");
         levelMusicMap.put(1, "src/main/resources/MusicaCitaPelea.wav");
         levelMusicMap.put(2, "src/main/resources/MusicaChiste.wav");

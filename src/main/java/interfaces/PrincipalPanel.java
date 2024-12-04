@@ -3,11 +3,8 @@ package main.java.interfaces;
 import main.java.interfaces.menu.*;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 import javax.swing.*;
-
-import javax.imageio.ImageIO;
 
 import java.io.File;
 
@@ -55,6 +52,7 @@ public class PrincipalPanel extends JPanel
 		SettingsJPanel settingsJPanel = new SettingsJPanel(pixelFont);
 		LevelLostJPanel levelLostJPanel = new LevelLostJPanel(pixelFont);
 		LevelCompletedJPanel levelCompletedJPanel = new LevelCompletedJPanel(pixelFont);
+		ControlsJPanel controlsJPanel = new ControlsJPanel(pixelFont);
 
 		add(mainMenuJPanel, "MainMenu"); // Menú principal
 		add(playLevelsJPanel, "PlayLevels"); // Menú de los niveles pre-hechos
@@ -62,6 +60,7 @@ public class PrincipalPanel extends JPanel
 		add(creditsJPanel, "Credits");
 		add(levelLostJPanel, "LevelLost");
 		add(levelCompletedJPanel, "LevelCompleted");
+		add(controlsJPanel, "Controls");
 
 		// -------- Levels ------------
 		for (int i = 0; i < 7; i++)

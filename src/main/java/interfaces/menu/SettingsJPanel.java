@@ -36,8 +36,8 @@ public class SettingsJPanel extends JPanel {
 		creditsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("Credits");
-				credits.play("src/main/resources/MusicaCreditos.wav");
-				credits.loop();
+//				credits.play("src/main/resources/MusicaCreditos.wav");
+//				credits.loop();
 			}
 		});
 		
@@ -45,7 +45,7 @@ public class SettingsJPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("MainMenu");
 				credits.stop();
-				MainMenuJPanel.playMusic();
+//				MainMenuJPanel.playMusic();
 
 			}
 		});

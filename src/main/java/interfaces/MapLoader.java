@@ -343,7 +343,10 @@ public class MapLoader extends JPanel
 		
 		for(CollisionComponent component : collisionComponents)
 		{
-			if(!(component.getOwner() instanceof Player) && !(component.getOwner() instanceof Wall))
+//			if(!(component.getOwner() instanceof Player) && !(component.getOwner() instanceof Wall))
+//				continue;
+			
+			if(component.getOwner() instanceof Enemy)
 				continue;
 
 			intersectionLines.addAll(component.getOutline());
@@ -658,6 +661,7 @@ public class MapLoader extends JPanel
 	public void playMusic()
 	{
 		soundManager.playLevelMusic(mapIndex);
+		soundManager.loopLevelMusic(mapIndex);
 	}
 
 }

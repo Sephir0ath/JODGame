@@ -17,7 +17,8 @@ public class MainMenuJPanel extends JPanel {
 	JButton exitButton;
 	JButton settingsButton;
 	JButton levelMakerButton;
-	
+	JButton instructionsButton;
+
 	private Font pixelFont;
 	private Image backgroundImage;
 	private Image playerImage;
@@ -44,12 +45,12 @@ public class MainMenuJPanel extends JPanel {
 		}
 		
 		playLevelsButton = createButton("Play Levels", this.pixelFont);
-		playLevelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/3, 400, 50);
+		playLevelsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
 		playLevelsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("PlayLevels");
-				mainMusic.stop();
+//				mainMusic.stop();
 			}
 
 		});
@@ -69,15 +70,26 @@ public class MainMenuJPanel extends JPanel {
 		add(exitButton);
 		
 		settingsButton = createButton("Settings", this.pixelFont);
-		settingsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
+		settingsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/3, 400, 50);
 		settingsButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				PrincipalPanel.getInstance().showPanel("Settings");
-				mainMusic.stop();
+//				mainMusic.stop();
 			}
 		});
 		add(settingsButton);
+
+		instructionsButton = createButton("Controls", this.pixelFont);
+		instructionsButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/2, 400, 50);
+		instructionsButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PrincipalPanel.getInstance().showPanel("Controls");
+//				mainMusic.stop();
+			}
+		});
+		add(instructionsButton);
 		
 		// levelMakerButton = createButton("Level Maker", this.pixelFont);
 		// levelMakerButton.setBounds(Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4, 400, 50);
@@ -105,7 +117,7 @@ public class MainMenuJPanel extends JPanel {
 			g.drawImage(backgroundImage, 0, 0, null);
 
 		if(menuImage != null)
-			g.drawImage(menuImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/8, 400, 100, null);
+			g.drawImage(menuImage, Window.getInstance().getWidth()/2-300, Window.getInstance().getHeight()/10, 600, 100, null);
 
 		if(playerImage != null)
 			g.drawImage(playerImage, Window.getInstance().getWidth()/2-200, Window.getInstance().getHeight()/4 + 300, 200, 200, null);
@@ -117,5 +129,9 @@ public class MainMenuJPanel extends JPanel {
 	public static void playMusic(){
 		mainMusic.play("src/main/resources/MusicaMain.wav");
 		mainMusic.loop();
+	}
+
+	public static void stopMusic(){
+		mainMusic.stop();
 	}
 }
