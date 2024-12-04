@@ -7,7 +7,7 @@ JODGame es un juego 2D con vista aérea, el cual está enfocado en un escenario 
 Implementado en el lenguaje Java, especificamente con la librería de interfaz grafica Swing y la herramienta de gestión de dependencias y construcción de proyectos Maven.
 
 ## Ejecución
-Para ejecutar, usar el script `run.sh` como sigue:
+Para ejecutar, usar el script `run.sh` como sigue (Solo en Linux):
 ```bash
 [ruta-repositorio]$ ./run.sh
 ```
