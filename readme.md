@@ -1,8 +1,6 @@
 # JODGame
 ---
-<p align="center">
-  <img src="[Main Menu](https://github.com/user-attachments/assets/a775a82b-4531-4d79-87ec-8b1b15a982d0)" />
-</p>
+![Mené](https://github.com/user-attachments/assets/a775a82b-4531-4d79-87ec-8b1b15a982d0)
 ---
 JODGame es un juego 2D con vista aérea, el cual está enfocado en un escenario donde el jugador debe enfrentarse a múltiples enemigos e interactuar dinámicamente con el entorno para así cumplir ciertos objetivos.
 
